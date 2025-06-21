@@ -80,6 +80,46 @@ body {
     margin-bottom: 1.5rem;    /* отступ снизу */
 }
 
+.anime-input{
+    flex: 1;                  /* занимает оставшееся пространство */
+    padding: 0.75rem 1rem;          /* внутренние отступы */
+    border: 2px solid #e2e8f0;   /* светло-серая рамка */
+    border-radius: 0.5rem;  /* скругление углов */
+    font-size: 1rem;          /* размер шрифта */
+    font-family: inherit;
+    background: white;
+    transition: all 0.3s ease;
+    outline: none;
+}
+.anime-input:focus {
+    border-color: #667eea;   /* цвет рамки при фокусе */
+    box-shadow: 0 0 0 3px rgba(126, 126, 234, 0.1); /* тень при фокусе */
+    transform: translate(-1px);
+}
+
+.anime-button{
+    padding: 0.75rem 1.5rem; /* внутренние отступы */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);      /* основной цвет кнопки */
+    color: white;             /* белый цвет текста */
+    border: none;             /* убираем рамку */
+    border-radius: 0.5rem;   /* скругление углов */
+    font-size: 1rem;          /* размер шрифта */
+    font-weight: 600;         /* полужирное начертание */
+    cursor: pointer;          /* указатель при наведении */
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.anime-button:hover {
+    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%); /* смена цвета при наведении */
+    transform: translateY(-2px); /* поднимаем кнопку при наведении */
+}
+
+.anime-button:active {
+    transform: translateY(0); /* опускаем кнопку при нажатии */
+    box-shadow: 0 0.25rem rgba(102, 126, 234, 0.2); /* легкая тень при нажатии */
+}
+
 /* Анимация подпрыгивания для заголовка */
 @keyframes bounce {
     0%, 20%, 50%, 80%, 100% {
