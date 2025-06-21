@@ -49,6 +49,37 @@ body {
     margin-bottom: 0;         /* убираем отступ снизу */
 }
 
+.main-conten{
+    display: grid;
+    grid-template-columns: 1fr 1fr;  /* две колонки одинаковой ширины */
+    gap: 2rem;                     /* отступы между колонками */
+    margin-bottom: 3rem;
+}
+
+/* Стили для карточек */
+.workers-section,
+.task-section{
+    background: rgba(255, 255, 255, 0.9); /* полупрозрачный белый фон */
+    border-radius:1rem;
+    padding: 2rem;
+    box-shadow: 0 0.5rem rgba(0, 0, 0, 0.1); /* легкая тень для объема */
+    backdrop-filter: blur(0.636rem); /* размытие фона */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* полупрозрачная рамка */
+}
+
+.section-title{
+    font-size: 1.5rem;        /* размер шрифта для заголовка секции */
+    font-weight: 600;         /* полужирное начертание */
+    color: #2d3748;           /* темно-серый цвет текста */
+    text-align: center;     /* отступ снизу */
+}
+
+.input-group{
+    display: flex;            /* флекс-контейнер для выравнивания */
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;    /* отступ снизу */
+}
+
 /* Анимация подпрыгивания для заголовка */
 @keyframes bounce {
     0%, 20%, 50%, 80%, 100% {
