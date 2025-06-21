@@ -1,0 +1,63 @@
+/*Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap');
+
+/* Base */
+* {
+    margin: 0;           /* убираем отступы */
+    padding: 0;          /* убираем внутренние отступы */
+    box-sizing: border-box;  /* размеры включают padding и border */
+}
+
+/* BAsic styles for body */
+body {
+    font-family: 'Nunito', sans-serif;  /* подключаем kawaii шрифт */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);  /* фиолетово-синий градиент */
+    min-height: 100vh;   /* минимальная высота = высота экрана */
+    color: #2d3748;      /* темно-серый цвет текста */
+    line-height: 1.6;    /* межстрочный интервал для читаемости */
+}
+
+/* Главный контейнер центрирован */
+.container {
+    max-width: 1200px;        /* максимальная ширина контейнера */
+    margin: 0 auto;           /* центрирование по горизонтали */
+    padding: 1.25rem;            /* отступы внутри контейнера */
+}
+
+/* Шапка сайта */
+.header {
+    text-align: center;       /* центрируем текст */
+    margin-bottom: 3rem;      /* отступ снизу (3rem = 48px) */
+    padding: 2rem 0;          /* отступы сверху и снизу */
+}
+
+/* Главный заголовок в kawaii стиле */
+.title {
+    font-size: 3.5rem;        /* большой размер шрифта */
+    font-weight: 700;         /* жирное начертание */
+    color: white;             /* белый цвет */
+    text-shadow:  0 0.25rem 0.9375rem rgba(0,0,0,0.3);  /* тень для объема */
+    margin-bottom: 1rem;      /* отступ снизу */
+    animation: bounce 2s infinite;  /* анимация подпрыгивания */
+}
+
+/* Подзаголовок */
+.subtitle {
+    font-size: 1.2rem;        /* средний размер */
+    color: rgba(255,255,255,0.9);  /* почти белый с прозрачностью */
+    font-weight: 300;         /* тонкое начертание */
+    margin-bottom: 0;         /* убираем отступ снизу */
+}
+
+/* Анимация подпрыгивания для заголовка */
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);    /* нормальная позиция */
+    }
+    40% {
+        transform: translateY(-0.625rem); /* поднимаем на 10px */
+    }
+    60% {
+        transform: translateY(-0.3125rem);   /* поднимаем на 5px */
+    }
+}
