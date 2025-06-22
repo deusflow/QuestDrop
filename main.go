@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	"questdrop/handlers"
 )
 
 func main() {
@@ -20,6 +22,15 @@ func main() {
 	})
 
 	http.Handle("/", fs)
+
+	// API роуты для работников
+	http.HandleFunc("/api/workers", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "GET" {
+			handlers.GetWorkers(w, r)
+		} else if r.Method == "POST" {
+			handlers.AddWorker(w, r)
+		}
+	})
 
 	fmt.Println("🚀 Сервер работает на http://localhost:8080")
 	fmt.Println("💖 Готов к распределению заданий!")
