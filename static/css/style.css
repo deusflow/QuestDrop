@@ -49,6 +49,19 @@ body {
     margin-bottom: 0;         /* убираем отступ снизу */
 }
 
+/* Анимация подпрыгивания для заголовка */
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);    /* нормальная позиция */
+    }
+    40% {
+        transform: translateY(-0.625rem); /* поднимаем адаптивно */
+    }
+    60% {
+        transform: translateY(-0.3125rem);  /* поднимаем адаптивно */
+    }
+}
+
 .main-content{
     display: grid;
     grid-template-columns: 1fr 1fr;  /* две колонки одинаковой ширины */
@@ -59,12 +72,12 @@ body {
 /* Стили для карточек */
 .workers-section,
 .tasks-section {
-    background: rgba(255, 255, 255, 0.9); /* полупрозрачный белый фон */
+    background: rgba(255, 255, 255, 0.15); /* полупрозрачный белый фон */
     border-radius: 1rem;
     padding: 2rem;
-    box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.1); /* легкая тень для объема */
-    backdrop-filter: blur(0.625rem); /* размытие фона */
-    border: 1px solid rgba(255,255,255,0.2); /* тонкая светлая граница */
+    box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.15); /* легкая тень для объема */
+    backdrop-filter: blur(0.755rem); /* размытие фона */
+    border: 1px solid rgba(255,255,255,0.3); /* тонкая светлая граница */
 }
 
 .section-title{
@@ -72,6 +85,7 @@ body {
     font-weight: 600;         /* полужирное начертание */
     color: #2d3748;           /* темно-серый цвет текста */
     text-align: center;     /* отступ снизу */
+    margin-bottom: 1.5rem;
 }
 
 .input-group{
