@@ -1,7 +1,7 @@
 
 // Массивы для хранения данных
 let workers = []; // Работники (синхронизируются с Go сервером)
-let tasks = [];   // Задания (пока только локально)
+let tasks = [];   // Задания (синхронизируются с Go сервером)
 
 // ============ ПОЛУЧЕНИЕ DOM ЭЛЕМЕНТОВ ============
 const workerNameInput = document.getElementById('worker-name');
@@ -29,6 +29,20 @@ function loadWorkers() {
             // В случае ошибки просто не обновляем список
         });
 }
+
+// Функция загрузки заданий с сервера
+function loadTasks() {
+    fetch('/api/tasks')
+        .then(response => response.json())
+        .then(data => {
+            tasks = data || [];  // Обновляем массив заданий
+            renderTasksList();   // Обновляем интерфейс
+        })
+        .catch(error => {
+            // В случае ошибки просто не обновляем список
+        });
+}
+
 
 // Функция добавления нового работника
 function addWorker() {
@@ -59,16 +73,29 @@ function addWorker() {
 
 // Функция добавления нового задания
 function addTask() {
-    const name = taskNameInput.value.trim();
-
-    if (name === '') {
-        alert('Please enter task name!');
+    const description = taskNameInput.value.trim();
+    
+    if (description === '') {
+        alert('Please enter task description!');
         return;
     }
-
-    tasks.push(name);
-    taskNameInput.value = '';
-    renderTasksList();
+    
+    // Отправляем POST запрос на Go сервер
+    fetch('/api/tasks', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({description: description})
+    })
+    .then(response => response.json())
+    .then(task => {
+        taskNameInput.value = '';
+        loadTasks();
+    })
+    .catch(error => {
+        alert('Ошибка добавления задания!');
+    });
 }
 
 // Функция отображения списка работников в HTML
@@ -95,7 +122,7 @@ function renderTasksList() {
         const taskDiv = document.createElement('div');
         taskDiv.className = 'list-item';
         taskDiv.innerHTML = `
-            <span>📋 ${task}</span>
+            <span>📋 ${typeof task === 'string' ? task : task.description}</span>
             <button onclick="removeTask(${index})" style="float: right; background: none; border: none; cursor: pointer;">❌</button>
         `;
         tasksListDiv.appendChild(taskDiv);
@@ -109,14 +136,15 @@ function removeWorker(index) {
 }
 
 function removeTask(index) {
-    tasks.splice(index, 1);    // Удаляем задание из массива по индексу
-    renderTasksList();         // Обновляем отображение
+    // TODO: Добавить DELETE запрос к серверу
+    alert('Удаление заданий будет добавлено позже!');
 }
 
 // ============ ОБРАБОТЧИКИ СОБЫТИЙ ============
 document.addEventListener('DOMContentLoaded', function() {
     // Загружаем существующих работников
     loadWorkers();
+    loadTasks();
 
     // Обработчики кнопок
     addWorkerBtn.addEventListener('click', addWorker);
