@@ -32,6 +32,15 @@ func main() {
 		}
 	})
 
+	// API роуты для заданий
+	http.HandleFunc("/api/tasks", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "GET" {
+			handlers.GetTasks(w, r)
+		} else if r.Method == "POST" {
+			handlers.AddTask(w, r)
+		}
+	})
+
 	fmt.Println("🚀 Сервер работает на http://localhost:8080")
 	fmt.Println("💖 Готов к распределению заданий!")
 
