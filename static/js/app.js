@@ -140,6 +140,39 @@ function removeTask(index) {
     alert('Удаление заданий будет добавлено позже!');
 }
 
+
+// Функция отображения результатов распределения
+function displayResults(results) {
+    resultsDiv.innerHTML = '';
+    
+    if (results.length === 0) {
+        resultsDiv.innerHTML = '<p>Нет данных для распределения</p>';
+        return;
+    }
+    
+    resultsDiv.innerHTML = '<h3>🎯 Результат распределения:</h3>';
+    
+    results.forEach(result => {
+        const resultDiv = document.createElement('div');
+        resultDiv.className = 'result-item';
+        resultDiv.style.marginBottom = '15px';
+        resultDiv.style.padding = '10px';
+        resultDiv.style.border = '1px solid #ddd';
+        resultDiv.style.borderRadius = '5px';
+        
+        const tasksHtml = result.tasks.map(task => `<li>${task}</li>`).join('');
+        
+        resultDiv.innerHTML = `
+            <h4>👤 ${result.worker_name}</h4>
+            <p><strong>Заданий: ${result.tasks.length}</strong></p>
+            <ul>${tasksHtml}</ul>
+        `;
+        
+        resultsDiv.appendChild(resultDiv);
+    });
+}
+
+
 // ============ ОБРАБОТЧИКИ СОБЫТИЙ ============
 document.addEventListener('DOMContentLoaded', function() {
     // Загружаем существующих работников
@@ -159,12 +192,20 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.key === 'Enter') addTask();
     });
 
-    // Магическая кнопка распределения
-    distributeBtn.addEventListener('click', function() {
-        if (workers.length === 0 || tasks.length === 0) {
-            alert('Add workers and tasks first!');
-            return;
-        }
-        alert('Magic distribution coming soon! ✨');
-    });
+   distributeBtn.addEventListener('click', function() {
+    if (workers.length === 0 || tasks.length === 0) {
+        alert('Add workers and tasks first!');
+        return;
+    }
+    
+    // Отправляем запрос на распределение
+    fetch('/api/distribute')
+        .then(response => response.json())
+        .then(results => {
+            displayResults(results);
+        })
+        .catch(error => {
+            alert('Ошибка распределения: ' + error);
+        });
+});
 });

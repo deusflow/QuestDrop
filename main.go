@@ -41,6 +41,9 @@ func main() {
 		}
 	})
 
+	// Роут для распределения заданий
+	http.HandleFunc("/api/distribute", handlers.DistributeTasks)
+
 	fmt.Println("🚀 Сервер работает на http://localhost:8080")
 	fmt.Println("💖 Готов к распределению заданий!")
 
