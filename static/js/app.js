@@ -1,43 +1,68 @@
 
-// Массивы для хранения работников и заданий (пока в памяти браузера)
-let workers = []; // Список всех добавленных работников
-let tasks = [];   // Список всех добавленных заданий
+// Массивы для хранения данных
+let workers = []; // Работники (синхронизируются с Go сервером)
+let tasks = [];   // Задания (пока только локально)
 
 // ============ ПОЛУЧЕНИЕ DOM ЭЛЕМЕНТОВ ============
-// Находим все нужные элементы интерфейса по их ID
-const workerNameInput = document.getElementById('worker-name');     // Поле ввода имени работника
-const addWorkerBtn = document.getElementById('add-worker');         // Кнопка Add для работников
-const workersListDiv = document.getElementById('workers-list');     // Контейнер для списка работников
+const workerNameInput = document.getElementById('worker-name');
+const addWorkerBtn = document.getElementById('add-worker');
+const workersListDiv = document.getElementById('workers-list');
 
-const taskNameInput = document.getElementById('task-name');         // Поле ввода названия задания
-const addTaskBtn = document.getElementById('add-task');             // Кнопка Add для заданий
-const tasksListDiv = document.getElementById('tasks-list');         // Контейнер для списка заданий
+const taskNameInput = document.getElementById('task-name');
+const addTaskBtn = document.getElementById('add-task');
+const tasksListDiv = document.getElementById('tasks-list');
 
-const distributeBtn = document.getElementById('distribute-tasks');  // Магическая кнопка распределения
-const resultsDiv = document.getElementById('results');              // Контейнер для результатов
+const distributeBtn = document.getElementById('distribute-tasks');
+const resultsDiv = document.getElementById('results');
 
 // ============ ОСНОВНЫЕ ФУНКЦИИ ============
 
+// Функция загрузки работников с сервера
+function loadWorkers() {
+    fetch('/api/workers')
+        .then(response => response.json())
+        .then(data => {
+            workers = data || [];  // Обновляем массив работников
+            renderWorkersList();   // Обновляем интерфейс
+        })
+        .catch(error => {
+            // В случае ошибки просто не обновляем список
+        });
+}
+
 // Функция добавления нового работника
 function addWorker() {
-    const name = workerNameInput.value.trim(); // Получаем текст из поля ввода и убираем пробелы
-
+    const name = workerNameInput.value.trim();
+    
     if (name === '') {
-        alert('Please enter worker name!'); // чекаю что поле не пустое
+        alert('Please enter worker name!');
         return;
     }
-
-    workers.push(name);           // Добавляю работника в массив
-    workerNameInput.value = '';   // Очищаю поле ввода
-    renderWorkersList();
+    
+    // Отправляем POST запрос на Go сервер
+    fetch('/api/workers', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({name: name})
+    })
+    .then(response => response.json())
+    .then(worker => {
+        workerNameInput.value = '';  // Очищаем поле ввода
+        loadWorkers();              // Обновляем список
+    })
+    .catch(error => {
+        alert('Ошибка добавления работника!');
+    });
 }
 
 // Функция добавления нового задания
 function addTask() {
-    const name = taskNameInput.value.trim(); //  текст из поля ввода и убираем пробелы
+    const name = taskNameInput.value.trim();
 
     if (name === '') {
-        alert('Please enter task name!'); // ? поле не пустое
+        alert('Please enter task name!');
         return;
     }
 
@@ -48,38 +73,39 @@ function addTask() {
 
 // Функция отображения списка работников в HTML
 function renderWorkersList() {
-    workersListDiv.innerHTML = ''; // Очищаем контейнер
+    workersListDiv.innerHTML = '';
 
     workers.forEach((worker, index) => {
-        const workerDiv = document.createElement('div');    // новый div элемент
-        workerDiv.className = 'list-item';          // Добавляяю CSS класс для стилизации
+        const workerDiv = document.createElement('div');
+        workerDiv.className = 'list-item';
+        const workerName = typeof worker === 'string' ? worker : worker.name;
         workerDiv.innerHTML = `
-            <span>👤 ${worker}</span>
+            <span>👤 ${workerName}</span>
             <button onclick="removeWorker(${index})" style="float: right; background: none; border: none; cursor: pointer;">❌</button>
         `;
-        workersListDiv.appendChild(workerDiv);              // Добавляем элемент в список
+        workersListDiv.appendChild(workerDiv);
     });
 }
 
 // Функция отображения списка заданий в HTML
 function renderTasksList() {
-    tasksListDiv.innerHTML = ''; // Очищаем контейнер
+    tasksListDiv.innerHTML = '';
 
     tasks.forEach((task, index) => {
-        const taskDiv = document.createElement('div');      // Создаем новый div элемент
-        taskDiv.className = 'list-item';                    // Добавляем CSS класс для стилизации
+        const taskDiv = document.createElement('div');
+        taskDiv.className = 'list-item';
         taskDiv.innerHTML = `
             <span>📋 ${task}</span>
             <button onclick="removeTask(${index})" style="float: right; background: none; border: none; cursor: pointer;">❌</button>
         `;
-        tasksListDiv.appendChild(taskDiv);                  // Добавляем элемент в список
+        tasksListDiv.appendChild(taskDiv);
     });
 }
 
-// Функции удаления элементов (для кнопок ❌)
+// Функции удаления элементов (временно отключены для работников)
 function removeWorker(index) {
-    workers.splice(index, 1);  // Удаляем работника из массива по индексу
-    renderWorkersList();       // Обновляем отображение
+    // TODO: Добавить DELETE запрос к серверу
+    alert('Удаление работников будет добавлено позже!');
 }
 
 function removeTask(index) {
@@ -88,30 +114,24 @@ function removeTask(index) {
 }
 
 // ============ ОБРАБОТЧИКИ СОБЫТИЙ ============
-// Привязываем функции к кнопкам когда страница загрузится
 document.addEventListener('DOMContentLoaded', function() {
+    // Загружаем существующих работников
+    loadWorkers();
 
-    // Клик по кнопке "Add ✨" для работников
+    // Обработчики кнопок
     addWorkerBtn.addEventListener('click', addWorker);
-
-    // Клик по кнопке "Add ✨" для заданий
     addTaskBtn.addEventListener('click', addTask);
 
-    // Нажатие Enter в поле ввода работника
+    // Обработчики Enter
     workerNameInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            addWorker(); // Вызываем функцию добавления при нажатии Enter
-        }
+        if (e.key === 'Enter') addWorker();
     });
 
-    // Нажатие Enter в поле ввода задания
     taskNameInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            addTask(); // Вызываем функцию добавления при нажатии Enter
-        }
+        if (e.key === 'Enter') addTask();
     });
 
-    // Пока магическая кнопка просто показывает alert (доработаем позже)
+    // Магическая кнопка распределения
     distributeBtn.addEventListener('click', function() {
         if (workers.length === 0 || tasks.length === 0) {
             alert('Add workers and tasks first!');
@@ -119,5 +139,4 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         alert('Magic distribution coming soon! ✨');
     });
-
 });
