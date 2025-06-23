@@ -9,10 +9,11 @@
 <body>
     <!-- Главный контейнер -->
     <div class="container">
-        <!-- header CSS -->
         <header class="header">
-            <h1 class="title">🌸 QuestDrop ✨</h1>
-            <p class="subtitle">Quest Shuffler: Cursed Allocation</p>
+            <h1 class="title">
+                <img src="/images/icons/LOGO.png" alt="QuestDrop" class="logo-icon">
+            </h1>
+            <p class="subtitle" id="typing-subtitle">Quest Shuffler: Cursed Allocation</p>
         </header>
 
         <!-- main content -->
@@ -20,27 +21,29 @@
             
             <!-- section of users -->
             <section class="workers-section">
-                <h2 class="section-title">👥 Workers</h2>
-                <!-- form to add users -->
-                <div class="input-group">
-                    <input type="text" id="worker-name" placeholder="Enter worker name" class="anime-input">
-                    <button id="add-worker" class="anime-button">Add ✨</button>
-                </div>
-                <!-- list of users -->
-                <div id="workers-list" class="workers-list"></div>
-            </section>
+    <h3><img src="/images/icons/WORKER.png" alt="Workers" class="section-icon"> Workers</h3>
+<!-- form to add users -->   
+<div class="input-group">
+    <input type="text" id="worker-name" placeholder="Enter worker name" class="anime-input">
+    <button id="add-worker" class="anime-button">Add ✨</button>
+</div>
+
+    <!-- list of users -->
+    <div id="workers-list" class="workers-list"></div>
+</section>
 
             <!-- section of assignment -->
-            <section class="tasks-section">
-                <h2 class="section-title">📋 Tasks</h2>
-                <!-- forma for add assignment -->
-                <div class="input-group">
-                    <input type="text" id="task-name" placeholder="Enter task name" class="anime-input">
-                    <button id="add-task" class="anime-button">Add ✨</button>
-                </div>
-                <!-- list of asignment -->
-                <div id="tasks-list" class="tasks-list"></div>
-            </section>
+        <section class="tasks-section">
+            <h3><img src="/images/icons/TASK.png" alt="Tasks" class="section-icon"> Tasks</h3>
+    <!-- forma for add assignment -->   
+<div class="input-group">
+    <input type="text" id="task-name" placeholder="Enter task name" class="anime-input">
+    <button id="add-task" class="anime-button">Add ✨</button>
+</div>
+
+    <!-- list of asignment -->
+    <div id="tasks-list" class="tasks-list"></div>
+</section>
 
             <!-- magic -->
             <section class="distribution-section">

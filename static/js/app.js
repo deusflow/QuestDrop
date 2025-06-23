@@ -172,40 +172,155 @@ function displayResults(results) {
     });
 }
 
+// Заменить класс AdvancedSakuraPetals на этот:
+class AdvancedSakuraPetals {
+    constructor() {
+        this.container = this.createContainer();
+        this.petals = [];
+        this.maxPetals = 15; // Увеличили количество
+        this.mouseX = 0;
+        this.mouseY = 0;
+        this.lastMouseTime = 0;
+        
+        this.initMouseTracking();
+    }
+    
+    createContainer() {
+        const container = document.createElement('div');
+        container.className = 'sakura-petals';
+        document.body.appendChild(container);
+        return container;
+    }
+    
+    initMouseTracking() {
+        document.addEventListener('mousemove', (e) => {
+            this.mouseX = e.clientX;
+            this.mouseY = e.clientY;
+            
+            // Создаем лепестки чаще при движении мыши
+            const now = Date.now();
+            if (now - this.lastMouseTime > 60) { // Уменьшили задержку
+                if (Math.random() < 0.50) { // Увеличили вероятность
+                    this.createPetal(e.clientX, e.clientY);
+                }
+                this.lastMouseTime = now;
+            }
+        });
+    }
+    
+    createPetal(x, y) {
+        if (this.petals.length >= this.maxPetals) {
+            const oldPetal = this.petals.shift();
+            if (oldPetal && oldPetal.parentNode) {
+                oldPetal.parentNode.removeChild(oldPetal);
+            }
+        }
+        
+        const petal = document.createElement('div');
+        petal.className = 'sakura-petal';
+        
+        // Добавляем случайные типы лепестков
+        const types = ['type-1', 'type-2', 'type-3', 'type-4'];
+        const randomType = types[Math.floor(Math.random() * types.length)];
+        petal.classList.add(randomType);
+        
+        // Начальная позиция рядом с курсором
+        petal.style.left = (x + Math.random() * 30 - 15) + 'px';
+        petal.style.top = (y + Math.random() * 30 - 15) + 'px';
+        
+        // Более разнообразное движение
+        const randomX = (Math.random() - 0.5) * 120;
+        const randomY = Math.random() * 80 + 40;
+        const finalX = randomX + (Math.random() - 0.5) * 60;
+        const finalY = randomY + Math.random() * 100;
+        
+        petal.style.setProperty('--random-x', randomX + 'px');
+        petal.style.setProperty('--random-y', randomY + 'px');
+        petal.style.setProperty('--final-x', finalX + 'px');
+        petal.style.setProperty('--final-y', finalY + 'px');
+        
+        this.container.appendChild(petal);
+        this.petals.push(petal);
+        
+        // Время жизни лепестка
+        setTimeout(() => {
+            if (petal.parentNode) {
+                petal.parentNode.removeChild(petal);
+                const index = this.petals.indexOf(petal);
+                if (index > -1) {
+                    this.petals.splice(index, 1);
+                }
+            }
+        }, 4000); // Немного уменьшили время жизни
+    }
+}
+
+
+
 
 // ============ ОБРАБОТЧИКИ СОБЫТИЙ ============
+// Заменить все обработчики DOMContentLoaded на один:
 document.addEventListener('DOMContentLoaded', function() {
-    // Загружаем существующих работников
+    // 🌸 ИНИЦИАЛИЗАЦИЯ ЛЕПЕСТКОВ САКУРЫ
+    new AdvancedSakuraPetals();
+    
+    // 📝 ИНИЦИАЛИЗАЦИЯ ПЕЧАТНОЙ МАШИНКИ
+    const subtitle = document.getElementById('typing-subtitle');
+    if (subtitle) {
+        const text = subtitle.textContent;
+        subtitle.innerHTML = '';
+        subtitle.classList.add('typing');
+        
+        text.split('').forEach((char, index) => {
+            const span = document.createElement('span');
+            span.textContent = char === ' ' ? '\u00A0' : char;
+            span.className = 'letter';
+            span.style.animationDelay = `${index * 80}ms`;
+            subtitle.appendChild(span);
+        });
+        
+        setTimeout(() => {
+            subtitle.classList.remove('typing');
+        }, text.length * 80 + 1000);
+    }
+    
+    // 🔄 ЗАГРУЗКА ДАННЫХ
     loadWorkers();
     loadTasks();
 
-    // Обработчики кнопок
-    addWorkerBtn.addEventListener('click', addWorker);
-    addTaskBtn.addEventListener('click', addTask);
+    // 🔘 ОБРАБОТЧИКИ КНОПОК
+    if (addWorkerBtn) addWorkerBtn.addEventListener('click', addWorker);
+    if (addTaskBtn) addTaskBtn.addEventListener('click', addTask);
 
-    // Обработчики Enter
-    workerNameInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') addWorker();
-    });
-
-    taskNameInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') addTask();
-    });
-
-   distributeBtn.addEventListener('click', function() {
-    if (workers.length === 0 || tasks.length === 0) {
-        alert('Add workers and tasks first!');
-        return;
-    }
-    
-    // Отправляем запрос на распределение
-    fetch('/api/distribute')
-        .then(response => response.json())
-        .then(results => {
-            displayResults(results);
-        })
-        .catch(error => {
-            alert('Ошибка распределения: ' + error);
+    // ⌨️ ОБРАБОТЧИКИ ENTER
+    if (workerNameInput) {
+        workerNameInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') addWorker();
         });
-});
+    }
+
+    if (taskNameInput) {
+        taskNameInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') addTask();
+        });
+    }
+
+    // 🎯 ОБРАБОТЧИК РАСПРЕДЕЛЕНИЯ
+    if (distributeBtn) {
+        distributeBtn.addEventListener('click', function() {
+            if (workers.length === 0 || tasks.length === 0) {
+                alert('Add workers and tasks first!');
+                return;
+            }
+            
+            fetch('/api/distribute')
+                .then(response => response.json())
+                .then(results => {
+                    displayResults(results);
+                })
+                .catch(error => {
+                    alert('Ошибка распределения: ' + error);
+                });
+        });
+    }
 });

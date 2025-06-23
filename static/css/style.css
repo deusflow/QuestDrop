@@ -27,27 +27,57 @@ body {
 /* Шапка сайта */
 .header {
     text-align: center;       /* центрируем текст */
-    margin-bottom: 3rem;      /* отступ снизу (3rem = 48px) */
+    margin-bottom: 1rem;      /* отступ снизу (3rem = 48px) */
     padding: 2rem 0;          /* отступы сверху и снизу */
 }
 
 /* Главный заголовок в kawaii стиле */
 .title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 3.5rem;        /* большой размер шрифта */
     font-weight: 700;         /* жирное начертание */
     color: white;             /* белый цвет */
-    text-shadow:  0 0.25rem 0.9375rem rgba(0,0,0,0.3);  /* тень для объема */
+    text-shadow: 0 0.25rem 0.9375rem rgba(0,0,0,0.3);  /* тень для объема */
     margin-bottom: 1rem;      /* отступ снизу */
     animation: bounce 2s infinite;  /* анимация подпрыгивания */
 }
 
+/* Стиль логотипа */
+.logo-icon {
+    width: 6rem;              /* увеличили размер */
+    height: 6rem;             /* увеличили размер */
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+    animation: logo-glow 2s ease-in-out infinite alternate;
+}
+
+/* Анимация свечения логотипа */
+@keyframes logo-glow {
+    0% {
+        filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+        transform: scale(1);
+    }
+    100% {
+        filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
+        transform: scale(1.05);
+    }
+}
+
 /* Подзаголовок */
 .subtitle {
-    font-size: 1.2rem;        /* средний размер */
-    color: rgba(255,255,255,0.9);  /* почти белый с прозрачностью */
-    font-weight: 300;         /* тонкое начертание */
-    margin-bottom: 0;         /* убираем отступ снизу */
+    font-family: 'Courier New', monospace;
+    font-size: 1.2rem;
+    color: #ecd5dc;
+    text-align: center;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    min-height: 2rem; /* резервируем место для подпрыгиваний */
 }
+
 
 /* Анимация подпрыгивания для заголовка */
 @keyframes bounce {
@@ -65,8 +95,9 @@ body {
 .main-content{
     display: grid;
     grid-template-columns: 1fr 1fr;  /* две колонки одинаковой ширины */
-    gap: 2rem;                     /* отступы между колонками */
-    margin-bottom: 3rem;
+    gap: 1rem;                     /* отступы между колонками */
+    margin-bottom: 1rem;
+     margin-top:-2rem;  
 }
 
 /* Стили для карточек */
@@ -79,6 +110,7 @@ body {
     backdrop-filter: blur(0.755rem); /* размытие фона */
     border: 1px solid rgba(255,255,255,0.3); /* тонкая светлая граница */
 }
+
 
 .section-title{
     font-size: 1.5rem;        /* размер шрифта для заголовка секции */
@@ -233,4 +265,304 @@ body {
 
 .list-item:hover::before {
     left: 100%;
+}
+
+
+/* Контейнер для input + иконка */
+.input-with-icon {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* расстояние между иконкой и полем */
+    flex: 1; /* занимает оставшееся место в input-group */
+}
+
+/* Иконка рядом с полем ввода */
+.input-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0; /* иконка не сжимается */
+    object-fit: contain;
+}
+
+/* Поле ввода в группе с иконкой */
+.input-with-icon .anime-input {
+    flex: 1; /* занимает оставшееся место */
+}
+
+
+
+h3 {
+    display: grid;
+    grid-template-columns: 8.75rem 1fr;
+    gap: 1rem;
+    align-items: center;
+    font-size: 4em;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+         /*  ЭТИ СТРОКИ ДЛЯ АНИМАЦИИ */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    transform-origin: center;
+}
+
+/* Hover эффект для существующей стеклянной рамки */
+h3:hover {
+    transform: scale(1.05); /* увеличение */
+    background: rgba(255, 255, 255, 0.2); /* ярче фон */
+    border: 1px solid rgba(255, 255, 255, 0.4); /* ярче граница */
+    backdrop-filter: blur(15px); /* сильнее размытие */
+    box-shadow: 
+        0 12px 40px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        0 0 25px rgba(255, 255, 255, 0.1); /* добавляем свечение */
+}
+
+/* Анимация иконки при hover h3 */
+h3:hover .section-icon {
+    transform: scale(1.0); /* увеличение иконки */
+    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
+}
+
+
+/* Иконки для обеих секций - одинаковые настройки */
+.section-icon {
+    grid-column: 1;
+    width: 6rem;
+    height: 8.75rem;
+    justify-self: start;
+    margin-bottom: -1.6rem;
+    
+    /* Ограничиваем область трансформации */
+    transition: all 0.3s ease;
+    transform-origin: center;
+    overflow: hidden; /* обрезаем выходящие части */
+    
+    /* Добавляем границы для контроля */
+    max-width: 6rem;
+    max-height: 8.75rem;
+    object-fit: contain; /* сохраняем пропорции */
+}
+
+
+/* Подзаголовок */
+.subtitle {
+    font-family: 'Courier New', monospace;
+    font-size: 1.3rem;
+    color: #ecd5dc;
+    text-align: center;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    min-height: 3rem; /* больше места для подпрыгиваний */
+    position: relative;
+}
+
+/* Стили для каждой буквы - ДРАМАТИЧНЫЙ УДАР */
+.subtitle .letter {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(40px) rotate(-15deg) scale(0.3);
+    animation: dramaticTypewriter 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+    text-shadow: 
+        0 0 20px rgba(255, 64, 129, 0.8),
+        0 5px 10px rgba(0, 0, 0, 0.5);
+    position: relative;
+}
+
+/* МОЩНАЯ анимация удара по клавише */
+@keyframes dramaticTypewriter {
+    0% {
+        opacity: 0;
+        transform: translateY(40px) rotate(-15deg) scale(0.3);
+        text-shadow: 0 0 5px rgba(255, 64, 129, 0.3);
+    }
+    
+    20% {
+        opacity: 0.8;
+        transform: translateY(-25px) rotate(8deg) scale(1.6);
+        text-shadow: 
+            0 0 30px rgba(255, 64, 129, 1),
+            0 8px 15px rgba(0, 0, 0, 0.7),
+            0 0 50px rgba(255, 255, 255, 0.5);
+    }
+    
+    40% {
+        opacity: 1;
+        transform: translateY(-15px) rotate(-5deg) scale(1.3);
+        text-shadow: 
+            0 0 25px rgba(255, 64, 129, 0.9),
+            0 6px 12px rgba(0, 0, 0, 0.6);
+    }
+    
+    60% {
+        transform: translateY(-8px) rotate(3deg) scale(1.1);
+        text-shadow: 
+            0 0 20px rgba(255, 64, 129, 0.8),
+            0 4px 8px rgba(0, 0, 0, 0.5);
+    }
+    
+    80% {
+        transform: translateY(-3px) rotate(-1deg) scale(1.05);
+    }
+    
+    100% {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg) scale(1);
+        text-shadow: 
+            0 0 15px rgba(255, 64, 129, 0.6),
+            0 3px 6px rgba(0, 0, 0, 0.4);
+    }
+}
+
+/* Подзаголовок - чистый и элегантный */
+.subtitle {
+    font-family: 'Courier New', monospace;
+    font-size: 1.2rem;
+    color: #ecd5dc;
+    text-align: center;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    min-height: 2rem;
+    position: relative;
+}
+
+/* Стили для каждой буквы - СДЕРЖАННЫЙ ЭФФЕКТ */
+.subtitle .letter {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: gentleTypewriter 0.5s ease-out forwards;
+    position: relative;
+}
+
+/* Мягкая анимация печатной машинки */
+@keyframes gentleTypewriter {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    
+    50% {
+        opacity: 0.8;
+        transform: translateY(-3px);
+        text-shadow: 0 0 8px rgba(236, 213, 220, 0.4);
+    }
+    
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+}
+
+/* Легкий курсор печатной машинки */
+.subtitle::after {
+    content: '|';
+    animation: blink 1s infinite;
+    opacity: 0;
+}
+
+.subtitle.typing::after {
+    opacity: 1;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}   
+
+
+/* Контейнер для лепестков сакуры */
+.sakura-petals {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+
+
+
+
+/* CSS лепесток сакуры с PNG - ЗАМЕНИТЬ СУЩЕСТВУЮЩИЙ КОД */
+.sakura-petal {
+    position: absolute;
+    pointer-events: none;
+    animation: gentlePetalFloat 4.5s ease-out forwards;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    /* Убираем все ::before и ::after - теперь используем PNG */
+}
+
+/* Убираем старые стили ::before и ::after */
+.sakura-petal::before,
+.sakura-petal::after {
+    display: none;
+}
+
+/* PNG лепестки разных типов */
+.sakura-petal.type-1 {
+    background-image: url('/images/Sakura/SAKURA.png');
+    width: 20px;
+    height: 20px;
+}
+
+.sakura-petal.type-2 {
+    background-image: url('/images/Sakura/SAKURA2.png');
+    width: 18px;
+    height: 18px;
+}
+
+.sakura-petal.type-3 {
+    background-image: url('/images/Sakura/SAKURA3.png');
+    width: 22px;
+    height: 22px;
+}
+
+.sakura-petal.type-4 {
+    background-image: url('/images/Sakura/SAKURA4.png');
+    width: 16px;
+    height: 16px;
+}
+
+/* Анимация остается прежней */
+@keyframes gentlePetalFloat {
+    0% {
+        transform: translate(0, 0) rotate(0deg) scale(1);
+        opacity: 0.9;
+    }
+    25% {
+        transform: translate(var(--random-x), var(--random-y)) rotate(90deg) scale(1.05);
+        opacity: 0.8;
+    }
+    50% {
+        transform: translate(calc(var(--random-x) * 1.2), calc(var(--random-y) * 1.5)) rotate(180deg) scale(0.95);
+        opacity: 0.6;
+    }
+    75% {
+        transform: translate(calc(var(--final-x) * 0.8), calc(var(--final-y) * 0.8)) rotate(270deg) scale(0.8);
+        opacity: 0.4;
+    }
+    100% {
+        transform: translate(var(--final-x), var(--final-y)) rotate(360deg) scale(0.3);
+        opacity: 0;
+    }
 }
