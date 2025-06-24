@@ -172,17 +172,19 @@ function displayResults(results) {
     });
 }
 
-// Заменить класс AdvancedSakuraPetals на этот:
+// Заменить весь класс AdvancedSakuraPetals на этот:
 class AdvancedSakuraPetals {
     constructor() {
         this.container = this.createContainer();
         this.petals = [];
-        this.maxPetals = 15; // Увеличили количество
+        this.maxPetals = 15;
         this.mouseX = 0;
         this.mouseY = 0;
         this.lastMouseTime = 0;
+        this.isEnabled = true; // НОВОЕ СВОЙСТВО - включены ли лепестки
         
         this.initMouseTracking();
+        this.initToggleButton(); // НОВЫЙ МЕТОД
     }
     
     createContainer() {
@@ -192,15 +194,58 @@ class AdvancedSakuraPetals {
         return container;
     }
     
+    // НОВЫЙ МЕТОД - инициализация кнопки
+    initToggleButton() {
+        const toggleBtn = document.getElementById('sakura-toggle');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                this.togglePetals();
+            });
+        }
+    }
+    
+    // НОВЫЙ МЕТОД - переключение лепестков
+    togglePetals() {
+        this.isEnabled = !this.isEnabled;
+        const toggleBtn = document.getElementById('sakura-toggle');
+        
+        if (this.isEnabled) {
+            // Включаем лепестки
+            toggleBtn.classList.remove('disabled');
+            toggleBtn.textContent = '🌸';
+            toggleBtn.title = 'Выключить лепестки сакуры';
+            console.log('🌸 Лепестки сакуры включены');
+        } else {
+            // Выключаем лепестки
+            toggleBtn.classList.add('disabled');
+            toggleBtn.textContent = '🚫';
+            toggleBtn.title = 'Включить лепестки сакуры';
+            this.clearAllPetals(); // удаляем все существующие лепестки
+            console.log('🚫 Лепестки сакуры выключены');
+        }
+    }
+    
+    // НОВЫЙ МЕТОД - очистка всех лепестков
+    clearAllPetals() {
+        this.petals.forEach(petal => {
+            if (petal && petal.parentNode) {
+                petal.parentNode.removeChild(petal);
+            }
+        });
+        this.petals = [];
+    }
+    
     initMouseTracking() {
         document.addEventListener('mousemove', (e) => {
+            // ПРОВЕРЯЕМ, ВКЛЮЧЕНЫ ЛИ ЛЕПЕСТКИ
+            if (!this.isEnabled) return;
+            
             this.mouseX = e.clientX;
             this.mouseY = e.clientY;
             
-            // Создаем лепестки чаще при движении мыши
             const now = Date.now();
-            if (now - this.lastMouseTime > 60) { // Уменьшили задержку
-                if (Math.random() < 0.50) { // Увеличили вероятность
+            if (now - this.lastMouseTime > 80) {
+                if (Math.random() < 0.35) {
                     this.createPetal(e.clientX, e.clientY);
                 }
                 this.lastMouseTime = now;
@@ -209,6 +254,9 @@ class AdvancedSakuraPetals {
     }
     
     createPetal(x, y) {
+        // ДВОЙНАЯ ПРОВЕРКА - не создаем лепестки если выключены
+        if (!this.isEnabled) return;
+        
         if (this.petals.length >= this.maxPetals) {
             const oldPetal = this.petals.shift();
             if (oldPetal && oldPetal.parentNode) {
@@ -219,16 +267,13 @@ class AdvancedSakuraPetals {
         const petal = document.createElement('div');
         petal.className = 'sakura-petal';
         
-        // Добавляем случайные типы лепестков
         const types = ['type-1', 'type-2', 'type-3', 'type-4'];
         const randomType = types[Math.floor(Math.random() * types.length)];
         petal.classList.add(randomType);
         
-        // Начальная позиция рядом с курсором
         petal.style.left = (x + Math.random() * 30 - 15) + 'px';
         petal.style.top = (y + Math.random() * 30 - 15) + 'px';
         
-        // Более разнообразное движение
         const randomX = (Math.random() - 0.5) * 120;
         const randomY = Math.random() * 80 + 40;
         const finalX = randomX + (Math.random() - 0.5) * 60;
@@ -242,7 +287,6 @@ class AdvancedSakuraPetals {
         this.container.appendChild(petal);
         this.petals.push(petal);
         
-        // Время жизни лепестка
         setTimeout(() => {
             if (petal.parentNode) {
                 petal.parentNode.removeChild(petal);
@@ -251,7 +295,7 @@ class AdvancedSakuraPetals {
                     this.petals.splice(index, 1);
                 }
             }
-        }, 4000); // Немного уменьшили время жизни
+        }, 4000);
     }
 }
 

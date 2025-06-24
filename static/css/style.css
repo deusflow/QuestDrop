@@ -566,3 +566,58 @@ h3:hover .section-icon {
         opacity: 0;
     }
 }
+
+
+
+/* Контейнер для кнопки в нижнем левом углу */
+.sakura-toggle-container {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 2000; /* выше лепестков */
+}
+
+/* Стили кнопки переключения лепестков */
+.sakura-toggle-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    color: #ff69b4;
+    font-size: 24px;
+    cursor: pointer;
+    
+    /* Анимация */
+    transition: all 0.3s ease;
+    
+    /* Тень для объема */
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Hover эффект для кнопки */
+.sakura-toggle-btn:hover {
+    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 
+        0 6px 20px rgba(0, 0, 0, 0.15),
+        0 0 20px rgba(255, 105, 180, 0.3);
+}
+
+/* Состояние "выключено" */
+.sakura-toggle-btn.disabled {
+    color: #666;
+    background: rgba(100, 100, 100, 0.15);
+    border-color: rgba(150, 150, 150, 0.3);
+}
+
+.sakura-toggle-btn.disabled:hover {
+    background: rgba(120, 120, 120, 0.2);
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.1),
+        0 0 15px rgba(150, 150, 150, 0.2);
+}
