@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"math/rand"
 	"net/http"
-	"time"
 )
 
 // DistributionResult представляет результат распределения для одного работника
@@ -23,9 +22,6 @@ func DistributeTasks(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode([]DistributionResult{})
 		return
 	}
-
-	// Инициализируем генератор случайных чисел
-	rand.Seed(time.Now().UnixNano())
 
 	// Double Shuffle: перемешиваем И работников И задания для справедливости
 	rand.Shuffle(len(workers), func(i, j int) {

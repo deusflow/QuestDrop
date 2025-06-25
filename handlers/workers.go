@@ -7,7 +7,6 @@ import (
 	"strings" // для работы со строками
 
 	"questdrop/models"
-
 )
 
 // Глобальная переменная для хранения работников в памяти
@@ -39,7 +38,7 @@ func DeleteWorker(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid URL", http.StatusBadRequest)
 		return
 	}
-	idStr := parts[3] // Получаем ID из URL, 3 позиция, т.к. 0 - это пустая строка, 1 - api, 2 - workers
+	idStr := parts[3]              // Получаем ID из URL, 3 позиция, т.к. 0 - это пустая строка, 1 - api, 2 - workers
 	id, err := strconv.Atoi(idStr) // Преобразуем ID из строки в число
 	if err != nil {
 		http.Error(w, "Invalid ID format", http.StatusBadRequest)
@@ -62,9 +61,10 @@ func DeleteWorker(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Worker not found", http.StatusNotFound) // Если не нашли
 		return
 	}
-	
+
 	// Удаляем работника из среза
 	workers = append(workers[:workerIndex], workers[workerIndex+1:]...) // Удаляем работника по индексу
-	    // Отправляем успешный ответ
-    w.WriteHeader(http.StatusOK)
-    json.NewEncoder(w).Encode(map[string]string{"message": "Worker deleted successfully"})
+	// Отправляем успешный ответ
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Worker deleted successfully"})
+}

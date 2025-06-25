@@ -21,34 +21,37 @@ func main() {
 		_, _ = w.Write([]byte("OK"))
 	})
 
-	http.Handle("/", fs)
-
 	// API роуты для работников
-	http.HandleFunc("/api/workers", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/workers/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Printf("🔍 WORKERS: %s %s\n", r.Method, r.URL.Path)
 		if r.Method == "GET" {
 			handlers.GetWorkers(w, r)
 		} else if r.Method == "POST" {
 			handlers.AddWorker(w, r)
+		} else if r.Method == "DELETE" {
+			handlers.DeleteWorker(w, r)
 		}
 	})
 
 	// API роуты для заданий
-	http.HandleFunc("/api/tasks", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/tasks/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Printf("🔍 TASKS: %s %s\n", r.Method, r.URL.Path)
 		if r.Method == "GET" {
 			handlers.GetTasks(w, r)
 		} else if r.Method == "POST" {
 			handlers.AddTask(w, r)
+		} else if r.Method == "DELETE" {
+			handlers.DeleteTask(w, r)
 		}
 	})
 
 	// Роут для распределения заданий
 	http.HandleFunc("/api/distribute", handlers.DistributeTasks)
 
+	http.Handle("/", fs)
+
 	fmt.Println("🚀 Сервер работает на http://localhost:8080")
 	fmt.Println("💖 Готов к распределению заданий!")
-
-	//говорят тут самые важные строки, запускаем сервер на порту 8080
-	// если порт занят, то программа завершится с ошибкой
 
 	// Делаем гибкий порт (хостинг сам назначит порт)
 	port := os.Getenv("PORT")
