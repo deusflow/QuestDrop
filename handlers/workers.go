@@ -4,83 +4,122 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"sync"
+	"time"
 
 	"questdrop/models"
 )
 
-// Глобальная переменная для хранения работников в памяти
-var workers []models.Worker
+var dataMu sync.RWMutex
 
-// GetWorkers возвращает список всех работников
+// Храним работников по userId
+var workersByUser = make(map[string][]models.Worker)
+var workerIDCounter = make(map[string]int)
+
+// Экспортируемые переменные для задач
+var TasksByUser = make(map[string][]models.Task)
+var TaskIDCounter = make(map[string]int)
+
+// Для очистки неактивных пользователей
+var userLastActive = make(map[string]time.Time)
+
+const userDataTTL = 7 * 24 * time.Hour // 7 дней
+
+// GetWorkers возвращает список работников для userId
 func GetWorkers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	err := json.NewEncoder(w).Encode(workers)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte(`{"error": "Internal server error"}`))
+	userId := r.URL.Query().Get("userId")
+	if userId == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(map[string]string{"error": "userId required"})
 		return
 	}
+	defer cleanupInactiveUsers()
+	updateUserActivity(userId)
+	dataMu.RLock()
+	json.NewEncoder(w).Encode(workersByUser[userId])
+	dataMu.RUnlock()
 }
 
-// AddWorker добавляет нового работника
+// AddWorker добавляет работника для userId
 func AddWorker(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var worker models.Worker
-	err := json.NewDecoder(r.Body).Decode(&worker)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest) // 400
-		err := json.NewEncoder(w).Encode(map[string]string{"error": "Invalid JSON"})
-		if err != nil {
-			return
-		}
+	var req struct {
+		Name   string `json:"name"`
+		UserId string `json:"userId"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(map[string]string{"error": "Invalid JSON"})
 		return
 	}
-
-	if worker.Name == "" {
-		w.WriteHeader(http.StatusBadRequest) // 400
-		err := json.NewEncoder(w).Encode(map[string]string{"error": "Name is required"})
-		if err != nil {
-			return
-		}
+	if req.Name == "" || req.UserId == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(map[string]string{"error": "Name and userId required"})
 		return
 	}
-
-	worker.ID = len(workers) + 1      // Присваиваем ID на основе текущей длины среза
-	workers = append(workers, worker) // Добавляем
-	// Возвращаем добавленного работника
-	err = json.NewEncoder(w).Encode(worker)
-	if err != nil {
-		return
-	}
+	dataMu.Lock()
+	workerIDCounter[req.UserId]++
+	worker := models.Worker{ID: workerIDCounter[req.UserId], Name: req.Name}
+	workersByUser[req.UserId] = append(workersByUser[req.UserId], worker)
+	dataMu.Unlock()
+	defer cleanupInactiveUsers()
+	updateUserActivity(req.UserId)
+	json.NewEncoder(w).Encode(worker)
 }
 
-// DeleteWorker удаляет работника по ID
+// DeleteWorker удаляет работника по ID для userId
 func DeleteWorker(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	// Получаем ID из URL
-	idStr := r.URL.Path[len("/api/workers/"):] // предполагаем, что путь такой
+	userId := r.URL.Query().Get("userId")
+	if userId == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(map[string]string{"error": "userId required"})
+		return
+	}
+	idStr := r.URL.Path[len("/api/workers/"):]
 	var id int
 	_, err := fmt.Sscanf(idStr, "%d", &id)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		err := json.NewEncoder(w).Encode(map[string]string{"error": "Invalid ID"})
-		if err != nil {
-			return
-		}
+		_ = json.NewEncoder(w).Encode(map[string]string{"error": "Invalid ID"})
 		return
 	}
-
-	// Ищем и удаляем работника
-	for i, worker := range workers {
+	dataMu.Lock()
+	list := workersByUser[userId]
+	for i, worker := range list {
 		if worker.ID == id {
-			workers = append(workers[:i], workers[i+1:]...)
-			w.WriteHeader(http.StatusNoContent) // 204
+			workersByUser[userId] = append(list[:i], list[i+1:]...)
+			w.WriteHeader(http.StatusOK)
+			_ = json.NewEncoder(w).Encode(map[string]string{"result": "deleted"})
+			dataMu.Unlock()
 			return
 		}
 	}
+	dataMu.Unlock()
 	w.WriteHeader(http.StatusNotFound)
-	err = json.NewEncoder(w).Encode(map[string]string{"error": "Worker not found"})
-	if err != nil {
-		return
+	_ = json.NewEncoder(w).Encode(map[string]string{"error": "Not found"})
+}
+
+// Обновляет время последней активности пользователя
+func updateUserActivity(userId string) {
+	if userId != "" {
+		userLastActive[userId] = time.Now()
+	}
+}
+
+// Удаляет неактивных пользователей (все данные)
+func cleanupInactiveUsers() {
+	now := time.Now()
+	for userId, last := range userLastActive {
+		if now.Sub(last) > userDataTTL {
+			dataMu.Lock()
+			delete(workersByUser, userId)
+			delete(workerIDCounter, userId)
+			delete(TasksByUser, userId)
+			delete(TaskIDCounter, userId)
+			delete(userLastActive, userId)
+			dataMu.Unlock()
+		}
 	}
 }

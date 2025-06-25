@@ -2,6 +2,21 @@
 let workers = []; // Работники (синхронизируются сGo сервером)
 let tasks = [];   // Задания (синхронизируются сGo сервером)
 
+function saveDataToLocalStorage() {
+    localStorage.setItem('workers', JSON.stringify(workers));
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+function loadDataFromLocalStorage() {
+    const savedWorkers = localStorage.getItem('workers');
+    const savedTasks = localStorage.getItem('tasks');
+    workers = savedWorkers ? JSON.parse(savedWorkers) : [];
+    tasks = savedTasks ? JSON.parse(savedTasks) : [];
+}
+
+// Загружаем данные из localStorage при старте
+loadDataFromLocalStorage();
+
 // ============ ПОЛУЧЕНИЕ DOM ЭЛЕМЕНТОВ ============
 const workerNameInput = document.getElementById('worker-name');
 const addWorkerBtn = document.getElementById('add-worker');
@@ -14,56 +29,60 @@ const tasksListDiv = document.getElementById('tasks-list');
 const distributeBtn = document.getElementById('distribute-tasks');
 const resultsDiv = document.getElementById('results');
 
+// Генерация и хранение userId
+function getUserId() {
+    let userId = localStorage.getItem('userId');
+    if (!userId) {
+        userId = 'u-' + Math.random().toString(36).substr(2, 16) + '-' + Date.now();
+        localStorage.setItem('userId', userId);
+    }
+    return userId;
+}
+const userId = getUserId();
+
 // ============ ОСНОВНЫЕ ФУНКЦИИ ============
 
-// Функция загрузки работников с сервера
+// Функция загрузки
 function loadWorkers() {
-    fetch('/api/workers')
+    fetch('/api/workers?userId=' + encodeURIComponent(userId))
         .then(response => response.json())
         .then(data => {
-            workers = data || [];  // Обновляем массив работников
-            renderWorkersList();   // Обновляем интерфейс
+            workers = data || [];
+            renderWorkersList();
+            saveDataToLocalStorage();
         })
-        .catch(error => {
-            // В случае ошибки просто не обновляем список
-        });
+        .catch(error => {});
 }
 
 // Функция загрузки заданий с сервера
 function loadTasks() {
-    fetch('/api/tasks')
+    fetch('/api/tasks?userId=' + encodeURIComponent(userId))
         .then(response => response.json())
         .then(data => {
-            tasks = data || [];  // Обновляем массив заданий
-            renderTasksList();   // Обновляем интерфейс
+            tasks = data || [];
+            renderTasksList();
+            saveDataToLocalStorage();
         })
-        .catch(error => {
-            // В случае ошибки просто не обновляем список
-        });
+        .catch(error => {});
 }
 
 
 // Функция добавления нового работника
 function addWorker() {
     const name = workerNameInput.value.trim();
-    
     if (name === '') {
         alert('Please enter worker name!');
         return;
     }
-    
-    // Отправляем POST запрос на Go сервер
     fetch('/api/workers', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({name: name})
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, userId })
     })
     .then(response => response.json())
     .then(worker => {
-        workerNameInput.value = '';  // Очищаем поле ввода
-        loadWorkers();              // Обновляем список
+        workerNameInput.value = '';
+        loadWorkers();
     })
     .catch(error => {
         alert('Ошибка добавления работника!');
@@ -73,19 +92,14 @@ function addWorker() {
 // Функция добавления нового задания
 function addTask() {
     const description = taskNameInput.value.trim();
-    
     if (description === '') {
         alert('Please enter task description!');
         return;
     }
-    
-    // Отправляем POST запрос на Go сервер
     fetch('/api/tasks', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({description: description})
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ description, userId })
     })
     .then(response => response.json())
     .then(task => {
@@ -130,17 +144,16 @@ function renderTasksList() {
 
 // Функции удаления элементов (временно отключены для работников)
 function removeWorker(index) {
-    // Получаем id работника по индексу
     const worker = workers[index];
     if (!worker || typeof worker.id === 'undefined') {
         alert('Некорректный работник!');
         return;
     }
     const id = worker.id;
-    fetch(`/api/workers/${id}`, { method: 'DELETE' })
+    fetch(`/api/workers/${id}?userId=${encodeURIComponent(userId)}`, { method: 'DELETE' })
         .then(response => {
             if (response.ok) {
-                loadWorkers(); // обновить список после удаления
+                loadWorkers();
             } else {
                 alert('Ошибка удаления работника!');
             }
@@ -149,17 +162,16 @@ function removeWorker(index) {
 }
 
 function removeTask(index) {
-    // Получаем id задания по индексу
     const task = tasks[index];
     if (!task || typeof task.id === 'undefined') {
         alert('Некорректное задание!');
         return;
     }
     const id = task.id;
-    fetch(`/api/tasks/${id}`, { method: 'DELETE' })
+    fetch(`/api/tasks/${id}?userId=${encodeURIComponent(userId)}`, { method: 'DELETE' })
         .then(response => {
             if (response.ok) {
-                loadTasks(); // обновить список после удаления
+                loadTasks();
             } else {
                 alert('Ошибка удаления задания!');
             }
@@ -197,7 +209,7 @@ function displayResults(results) {
     });
 }
 
-// Заменить весь класс AdvancedSakuraPetals на этот:
+// Заменить весь класс AdvancedSakuraPetals на эт��т:
 class AdvancedSakuraPetals {
     constructor() {
         this.container = this.createContainer();
@@ -343,8 +355,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // 🔄 ЗАГРУЗКА ДАННЫХ
-    loadWorkers();
-    loadTasks();
+    // loadWorkers();
+    // loadTasks();
+    renderWorkersList();
+    renderTasksList();
 
     // 🔘 ОБРАБОТЧИКИ КНОПОК
     if (addWorkerBtn) addWorkerBtn.addEventListener('click', addWorker);
@@ -381,4 +395,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
         });
     }
+
+    document.getElementById('reset-all').addEventListener('click', function() {
+        fetch('/api/reset', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId })
+        })
+        .then(() => {
+            // Очищаем localStorage для workers и tasks
+            localStorage.removeItem('workers');
+            localStorage.removeItem('tasks');
+            // После сброса загружаем пустые данные с сервера и синхронизируем localStorage
+            loadWorkers();
+            loadTasks();
+            resultsDiv.innerHTML = '';
+        });
+    });
 });

@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"math/rand"
 	"net/http"
 )
 
@@ -12,44 +11,42 @@ type DistributionResult struct {
 	Tasks      []string `json:"tasks"`
 }
 
-// DistributeTasks распределяет задания между работниками сбалансированно
+// DistributeTasks распределяет задания между работниками сбалансированно/// Пример: распределение только по userId
 func DistributeTasks(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-
-	//check if there are workers and tasks
-	if len(workers) == 0 || len(tasks) == 0 {
-		// Если нет работников или заданий, возвращаем пустой результат
-		json.NewEncoder(w).Encode([]DistributionResult{})
+	userId := r.URL.Query().Get("userId")
+	if userId == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(map[string]string{"error": "userId required"})
 		return
 	}
-
-	// Инициализируем генератор случайных чисел
-
-	// Double Shuffle: перемешиваем И работников И задания для справедливости
-	rand.Shuffle(len(workers), func(i, j int) {
-		workers[i], workers[j] = workers[j], workers[i]
-	})
-	rand.Shuffle(len(tasks), func(i, j int) {
-		tasks[i], tasks[j] = tasks[j], tasks[i]
-	})
-
-	// массив результатов для каждого работника
-	results := make([]DistributionResult, len(workers))
-	// Заполняем результаты именами работников
-	for index, worker := range workers {
-		results[index] = DistributionResult{
-			WorkerName: worker.Name,
-			Tasks:      []string{},
+	dataMu.RLock()
+	workers := workersByUser[userId]
+	tasks := tasksByUser[userId]
+	dataMu.RUnlock()
+	// Здесь ваша логика распределения (пример: равномерно)
+	results := []map[string]interface{}{}
+	if len(workers) == 0 || len(tasks) == 0 {
+		_ = json.NewEncoder(w).Encode(results)
+		return
+	}
+	tasksPerWorker := len(tasks) / len(workers)
+	extra := len(tasks) % len(workers)
+	taskIdx := 0
+	for i, worker := range workers {
+		count := tasksPerWorker
+		if i < extra {
+			count++
 		}
+		workerTasks := []string{}
+		for j := 0; j < count && taskIdx < len(tasks); j++ {
+			workerTasks = append(workerTasks, tasks[taskIdx].Description)
+			taskIdx++
+		}
+		results = append(results, map[string]interface{}{
+			"worker_name": worker.Name,
+			"tasks":       workerTasks,
+		})
 	}
-
-	// Сбалансированное распределение заданий
-	for index, task := range tasks {
-		workerIndex := index % len(workers) // Индекс работника по кругу
-		results[workerIndex].Tasks = append(results[workerIndex].Tasks, task.Description)
-	}
-
-	// Отправляем результат распределения
-	json.NewEncoder(w).Encode(results)
-
+	_ = json.NewEncoder(w).Encode(results)
 }

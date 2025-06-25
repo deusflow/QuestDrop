@@ -215,7 +215,7 @@ body {
     border-color: rgba(255,255,255,0.2);
 }
 
-/* Блестящий эффект при hover */
+/* Блестящий эффе��т при hover */
 .magic-button:hover::before {
     left: 100%;
 }
@@ -226,7 +226,7 @@ body {
     transition: transform 0.1s ease;
 }
 
-/* Списки работников и заданий в премиум стиле */
+/* Списки работников заданий в премиум стиле */
 .workers-list,
 .tasks-list {
     margin-top: 1.5rem;
@@ -285,7 +285,7 @@ body {
     object-fit: contain;
 }
 
-/* Поле ввода в группе с иконкой */
+/* Поле ��вода в группе с иконкой */
 .input-with-icon .anime-input {
     flex: 1; /* занимает оставшееся место */
 }
@@ -653,4 +653,102 @@ html, body {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
     transform-origin: center;
+}
+
+/* Кнопка сброса - адаптивно закреплена в правом верхнем углу */
+.reset-all-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  padding: 10px 18px;
+  font-size: 1rem;
+  background: #fff6fa;
+  color: #d72660;
+  border: 2px solid #d72660;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(215,38,96,0.08);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.reset-all-btn:hover {
+  background: #d72660;
+  color: #fff6fa;
+}
+@media (max-width: 600px) {
+  .reset-all-btn {
+    top: 10px;
+    right: 10px;
+    padding: 8px 12px;
+    font-size: 0.95rem;
+  }
+}
+
+/* --- Reset toggle button styles --- */
+.reset-toggle-container {
+    position: fixed;
+    right: 2vw;
+    bottom: 2vw;
+    z-index: 1000;
+    display: flex;
+    align-items: flex-end;
+}
+.reset-toggle-btn {
+    background: rgba(255,255,255,0.18);
+    color: #FBACC6FF;
+    font-size: 1rem;
+    border: 1.5px solid rgba(255,38,96,0.45);
+    border-radius: 50%;
+    box-shadow: 0 8px 32px 0 rgba(255, 182, 193, 0.25), 0 1.5px 6px 0 rgba(120, 0, 60, 0.08), 0 1px 2px 0 rgba(255,255,255,0.18) inset;
+    cursor: pointer;
+    outline: none;
+    transition: box-shadow 0.3s, transform 0.2s, background 0.3s, border 0.3s;
+    backdrop-filter: blur(18px) saturate(180%);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+    position: relative;
+    overflow: hidden;
+    font-family: inherit;
+    font-weight: 700;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 5.5em;
+    height: 5.5em;
+    min-width: 3.2em;
+    min-height: 3.2em;
+    padding: 0;
+}
+.reset-toggle-btn span {
+    display: block;
+    width: 100%;
+    text-align: center;
+    line-height: 3.2em;
+    font-size: 1.1em;
+    font-weight: 700;
+    letter-spacing: 1px;
+    pointer-events: none;
+}
+.reset-toggle-btn:hover {
+    box-shadow: 0 12px 40px 0 rgba(255, 182, 193, 0.35), 0 2px 8px 0 rgba(120, 0, 60, 0.12);
+    transform: scale(1.10) rotate(-6deg);
+    border: 2px solid #FBACC6FF;
+}
+@media (max-width: 600px) {
+    .reset-toggle-btn {
+        font-size: 0.7rem;
+        width: 4.2em;
+        height: 4.2em;
+        min-width: 2.2em;
+        min-height: 2.2em;
+    }
+    .reset-toggle-btn span {
+        line-height: 2.2em;
+        font-size: 0.95em;
+    }
+
+    h3{
+        font-size: 2.4em;
+        margin-left: -50px;
+    }
 }

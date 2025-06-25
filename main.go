@@ -65,6 +65,15 @@ func main() {
 	// Роут для распределения заданий
 	http.HandleFunc("/api/distribute", handlers.DistributeTasks)
 
+	// Роут для сброса данных пользователя
+	http.HandleFunc("/api/reset", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "POST" {
+			handlers.ResetUserData(w, r)
+		} else {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+		}
+	})
+
 	http.Handle("/", fs)
 
 	fmt.Println("🚀 Сервер работает на http://localhost:8080")
