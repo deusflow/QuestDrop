@@ -17,7 +17,7 @@ func GetWorkers(w http.ResponseWriter, r *http.Request) {
 	err := json.NewEncoder(w).Encode(workers)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(`{"error": "Internal server error"}`))
+		_, _ = w.Write([]byte(`{"error": "Internal server error"}`))
 		return
 	}
 }
