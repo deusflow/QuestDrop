@@ -23,6 +23,8 @@ func DistributeTasks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Инициализируем генератор случайных чисел
+
 	// Double Shuffle: перемешиваем И работников И задания для справедливости
 	rand.Shuffle(len(workers), func(i, j int) {
 		workers[i], workers[j] = workers[j], workers[i]

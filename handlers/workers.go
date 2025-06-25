@@ -2,9 +2,8 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
-	"strconv" //конвертация строк в числа
-	"strings" // для работы со строками
 
 	"questdrop/models"
 )
@@ -29,42 +28,27 @@ func AddWorker(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(worker)
 }
 
-// func DeleteWorker(w http.ResponseWriter, r *http.Request) {
+// DeleteWorker удаляет работника по ID
 func DeleteWorker(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	// нужно разбить УРЛ на части, чтобы получить ID работника
-	parts := strings.Split(r.URL.Path, "/")
-	if len(parts) < 4 {
-		http.Error(w, "Invalid URL", http.StatusBadRequest)
-		return
-	}
-	idStr := parts[3]              // Получаем ID из URL, 3 позиция, т.к. 0 - это пустая строка, 1 - api, 2 - workers
-	id, err := strconv.Atoi(idStr) // Преобразуем ID из строки в число
+	// Получаем ID из URL
+	idStr := r.URL.Path[len("/api/workers/"):] // предполагаем, что путь такой
+	var id int
+	_, err := fmt.Sscanf(idStr, "%d", &id)
 	if err != nil {
-		http.Error(w, "Invalid ID format", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid ID"})
 		return
 	}
 
-	// Ищем работника с таким ID
-	workerIndex := -1
+	// Ищем и удаляем работника
 	for i, worker := range workers {
-		// Сравниваем ID работника с переданным ID
-		// Если нашли работника с таким ID, запоминаем индекс
-		// и выходим из цикла
 		if worker.ID == id {
-			workerIndex = i
-			break
+			workers = append(workers[:i], workers[i+1:]...)
+			w.WriteHeader(http.StatusNoContent) // 204
+			return
 		}
-
 	}
-	if workerIndex == -1 {
-		http.Error(w, "Worker not found", http.StatusNotFound) // Если не нашли
-		return
-	}
-
-	// Удаляем работника из среза
-	workers = append(workers[:workerIndex], workers[workerIndex+1:]...) // Удаляем работника по индексу
-	// Отправляем успешный ответ
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{"message": "Worker deleted successfully"})
+	w.WriteHeader(http.StatusNotFound)
+	json.NewEncoder(w).Encode(map[string]string{"error": "Worker not found"})
 }

@@ -2,9 +2,8 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
-	"strconv"
-	"strings"
 
 	"questdrop/models"
 )
@@ -28,39 +27,24 @@ func AddTask(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(task)
 }
 
-// DeleteTask удаляет задание по ID из URL
 func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	// Разбиваем URL на части, чтобы получить ID задания
-	parts := strings.Split(r.URL.Path, "/")
-	if len(parts) < 4 {
-		http.Error(w, "Invalid URL", http.StatusBadRequest)
-		return
-	}
-	idStr := parts[3]              // Получаем ID из URL, 3 позиция, т.к. 0 - это пустая строка, 1 - api, 2 - tasks
-	id, err := strconv.Atoi(idStr) // Преобразуем ID из строки в число
+	idStr := r.URL.Path[len("/api/tasks/"):] // предполагаем, что путь такой
+	var id int
+	_, err := fmt.Sscanf(idStr, "%d", &id)
 	if err != nil {
-		http.Error(w, "Invalid ID format", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid ID"})
 		return
 	}
 
-	// Ищем задание с таким ID
-	taskIndex := -1
 	for i, task := range tasks {
 		if task.ID == id {
-			taskIndex = i
-			break
+			tasks = append(tasks[:i], tasks[i+1:]...)
+			w.WriteHeader(http.StatusNoContent)
+			return
 		}
 	}
-
-	// Если не нашли задание с таким ID, возвращаем ошибку 404
-	if taskIndex == -1 {
-		http.Error(w, "Task not found", http.StatusNotFound)
-		return
-	}
-
-	// Удаляем задание из среза
-	tasks = append(tasks[:taskIndex], tasks[taskIndex+1:]...)
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{"message": "Task deleted successfully"})
+	w.WriteHeader(http.StatusNotFound)
+	json.NewEncoder(w).Encode(map[string]string{"error": "Task not found"})
 }

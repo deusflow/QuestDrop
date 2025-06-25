@@ -1,7 +1,6 @@
-
 // Массивы для хранения данных
 let workers = []; // Работники (синхронизируются с Go сервером)
-let tasks = [];   // Задания (синхронизируются с Go сервером)
+let tasks = [];   // Задания (синхронизируются сGo сервером)
 
 // ============ ПОЛУЧЕНИЕ DOM ЭЛЕМЕНТОВ ============
 const workerNameInput = document.getElementById('worker-name');
@@ -131,13 +130,41 @@ function renderTasksList() {
 
 // Функции удаления элементов (временно отключены для работников)
 function removeWorker(index) {
-    // TODO: Добавить DELETE запрос к серверу
-    alert('Удаление работников будет добавлено позже!');
+    // Получаем id работника по индексу
+    const worker = workers[index];
+    if (!worker || typeof worker.id === 'undefined') {
+        alert('Некорректный работник!');
+        return;
+    }
+    const id = worker.id;
+    fetch(`/api/workers/${id}`, { method: 'DELETE' })
+        .then(response => {
+            if (response.ok) {
+                loadWorkers(); // обновить список после удаления
+            } else {
+                alert('Ошибка удаления работника!');
+            }
+        })
+        .catch(() => alert('Ошибка удаления работника!'));
 }
 
 function removeTask(index) {
-    // TODO: Добавить DELETE запрос к серверу
-    alert('Удаление заданий будет добавлено позже!');
+    // Получаем id задания по индексу
+    const task = tasks[index];
+    if (!task || typeof task.id === 'undefined') {
+        alert('Некорректное задание!');
+        return;
+    }
+    const id = task.id;
+    fetch(`/api/tasks/${id}`, { method: 'DELETE' })
+        .then(response => {
+            if (response.ok) {
+                loadTasks(); // обновить список после удаления
+            } else {
+                alert('Ошибка удаления задания!');
+            }
+        })
+        .catch(() => alert('Ошибка удаления задания!'));
 }
 
 
@@ -182,18 +209,18 @@ class AdvancedSakuraPetals {
         this.mouseY = 0;
         this.lastMouseTime = 0;
         this.isEnabled = true; // НОВОЕ СВОЙСТВО - включены ли лепестки
-        
+
         this.initMouseTracking();
         this.initToggleButton(); // НОВЫЙ МЕТОД
     }
-    
+
     createContainer() {
         const container = document.createElement('div');
         container.className = 'sakura-petals';
         document.body.appendChild(container);
         return container;
     }
-    
+
     // НОВЫЙ МЕТОД - инициализация кнопки
     initToggleButton() {
         const toggleBtn = document.getElementById('sakura-toggle');
@@ -203,12 +230,12 @@ class AdvancedSakuraPetals {
             });
         }
     }
-    
+
     // НОВЫЙ МЕТОД - переключение лепестков
     togglePetals() {
         this.isEnabled = !this.isEnabled;
         const toggleBtn = document.getElementById('sakura-toggle');
-        
+
         if (this.isEnabled) {
             // Включаем лепестки
             toggleBtn.classList.remove('disabled');
@@ -224,7 +251,7 @@ class AdvancedSakuraPetals {
             console.log('🚫 Лепестки сакуры выключены');
         }
     }
-    
+
     // НОВЫЙ МЕТОД - очистка всех лепестков
     clearAllPetals() {
         this.petals.forEach(petal => {
@@ -234,15 +261,15 @@ class AdvancedSakuraPetals {
         });
         this.petals = [];
     }
-    
+
     initMouseTracking() {
         document.addEventListener('mousemove', (e) => {
             // ПРОВЕРЯЕМ, ВКЛЮЧЕНЫ ЛИ ЛЕПЕСТКИ
             if (!this.isEnabled) return;
-            
+
             this.mouseX = e.clientX;
             this.mouseY = e.clientY;
-            
+
             const now = Date.now();
             if (now - this.lastMouseTime > 80) {
                 if (Math.random() < 0.35) {
@@ -252,41 +279,41 @@ class AdvancedSakuraPetals {
             }
         });
     }
-    
+
     createPetal(x, y) {
         // ДВОЙНАЯ ПРОВЕРКА - не создаем лепестки если выключены
         if (!this.isEnabled) return;
-        
+
         if (this.petals.length >= this.maxPetals) {
             const oldPetal = this.petals.shift();
             if (oldPetal && oldPetal.parentNode) {
                 oldPetal.parentNode.removeChild(oldPetal);
             }
         }
-        
+
         const petal = document.createElement('div');
         petal.className = 'sakura-petal';
-        
+
         const types = ['type-1', 'type-2', 'type-3', 'type-4'];
         const randomType = types[Math.floor(Math.random() * types.length)];
         petal.classList.add(randomType);
-        
+
         petal.style.left = (x + Math.random() * 30 - 15) + 'px';
         petal.style.top = (y + Math.random() * 30 - 15) + 'px';
-        
+
         const randomX = (Math.random() - 0.5) * 120;
         const randomY = Math.random() * 80 + 40;
         const finalX = randomX + (Math.random() - 0.5) * 60;
         const finalY = randomY + Math.random() * 100;
-        
+
         petal.style.setProperty('--random-x', randomX + 'px');
         petal.style.setProperty('--random-y', randomY + 'px');
         petal.style.setProperty('--final-x', finalX + 'px');
         petal.style.setProperty('--final-y', finalY + 'px');
-        
+
         this.container.appendChild(petal);
         this.petals.push(petal);
-        
+
         setTimeout(() => {
             if (petal.parentNode) {
                 petal.parentNode.removeChild(petal);
@@ -307,14 +334,14 @@ class AdvancedSakuraPetals {
 document.addEventListener('DOMContentLoaded', function() {
     // 🌸 ИНИЦИАЛИЗАЦИЯ ЛЕПЕСТКОВ САКУРЫ
     new AdvancedSakuraPetals();
-    
+
     // 📝 ИНИЦИАЛИЗАЦИЯ ПЕЧАТНОЙ МАШИНКИ
     const subtitle = document.getElementById('typing-subtitle');
     if (subtitle) {
         const text = subtitle.textContent;
         subtitle.innerHTML = '';
         subtitle.classList.add('typing');
-        
+
         text.split('').forEach((char, index) => {
             const span = document.createElement('span');
             span.textContent = char === ' ' ? '\u00A0' : char;
@@ -322,12 +349,12 @@ document.addEventListener('DOMContentLoaded', function() {
             span.style.animationDelay = `${index * 80}ms`;
             subtitle.appendChild(span);
         });
-        
+
         setTimeout(() => {
             subtitle.classList.remove('typing');
         }, text.length * 80 + 1000);
     }
-    
+
     // 🔄 ЗАГРУЗКА ДАННЫХ
     loadWorkers();
     loadTasks();
@@ -356,7 +383,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Add workers and tasks first!');
                 return;
             }
-            
+
             fetch('/api/distribute')
                 .then(response => response.json())
                 .then(results => {
