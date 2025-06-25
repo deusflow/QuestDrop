@@ -1,5 +1,5 @@
 // Массивы для хранения данных
-let workers = []; // Работники (синхронизируются с Go сервером)
+let workers = []; // Работники (синхронизируются сGo сервером)
 let tasks = [];   // Задания (синхронизируются сGo сервером)
 
 // ============ ПОЛУЧЕНИЕ DOM ЭЛЕМЕНТОВ ============
@@ -171,31 +171,29 @@ function removeTask(index) {
 // Функция отображения результатов распределения
 function displayResults(results) {
     resultsDiv.innerHTML = '';
-    
     if (results.length === 0) {
         resultsDiv.innerHTML = '<p>Нет данных для распределения</p>';
         return;
     }
-    
-    resultsDiv.innerHTML = '<h3>🎯 Результат распределения:</h3>';
-    
+    resultsDiv.innerHTML =`
+  <div class="results-header">
+    <span class="results-icon"></span>
+    <span class="results-title-text">Outcome of the distribution:</span>
+  </div>
+  <ul class="results-list"></ul>
+`;
+    const resultsList = resultsDiv.querySelector('.results-list');
     results.forEach(result => {
-        const resultDiv = document.createElement('div');
-        resultDiv.className = 'result-item';
-        resultDiv.style.marginBottom = '15px';
-        resultDiv.style.padding = '10px';
-        resultDiv.style.border = '1px solid #ddd';
-        resultDiv.style.borderRadius = '5px';
-        
-        const tasksHtml = result.tasks.map(task => `<li>${task}</li>`).join('');
-        
-        resultDiv.innerHTML = `
-            <h4>👤 ${result.worker_name}</h4>
-            <p><strong>Заданий: ${result.tasks.length}</strong></p>
-            <ul>${tasksHtml}</ul>
-        `;
-        
-        resultsDiv.appendChild(resultDiv);
+        const li = document.createElement('li');
+        li.className = 'list-item result-item';
+        li.innerHTML = `
+    <h4 class="result-worker">👤 ${result.worker_name}</h4>
+    <p><strong>Tasks: ${result.tasks.length}</strong></p>
+    <ul class="result-tasks">
+      ${result.tasks.map(task => `<li>${task}</li>`).join('')}
+    </ul>
+  `;
+        resultsList.appendChild(li);
     });
 }
 
@@ -205,8 +203,6 @@ class AdvancedSakuraPetals {
         this.container = this.createContainer();
         this.petals = [];
         this.maxPetals = 15;
-        this.mouseX = 0;
-        this.mouseY = 0;
         this.lastMouseTime = 0;
         this.isEnabled = true; // НОВОЕ СВОЙСТВО - включены ли лепестки
 
@@ -267,62 +263,53 @@ class AdvancedSakuraPetals {
             // ПРОВЕРЯЕМ, ВКЛЮЧЕНЫ ЛИ ЛЕПЕСТКИ
             if (!this.isEnabled) return;
 
-            this.mouseX = e.clientX;
-            this.mouseY = e.clientY;
-
             const now = Date.now();
             if (now - this.lastMouseTime > 80) {
-                if (Math.random() < 0.35) {
-                    this.createPetal(e.clientX, e.clientY);
-                }
+                this.createPetal(e.clientX, e.clientY);
                 this.lastMouseTime = now;
             }
         });
     }
 
+    // Создание лепестка (теперь с картинкой)
     createPetal(x, y) {
-        // ДВОЙНАЯ ПРОВЕРКА - не создаем лепестки если выключены
         if (!this.isEnabled) return;
+        if (this.petals.length >= this.maxPetals) return;
 
-        if (this.petals.length >= this.maxPetals) {
-            const oldPetal = this.petals.shift();
-            if (oldPetal && oldPetal.parentNode) {
-                oldPetal.parentNode.removeChild(oldPetal);
-            }
-        }
+        // Случайный выбор картинки
+        const images = [
+            '/images/Sakura/SAKURA.png',
+            '/images/Sakura/SAKURA2.png',
+            '/images/Sakura/SAKURA3.png',
+            '/images/Sakura/SAKURA4.png'
+        ];
+        const imgSrc = images[Math.floor(Math.random() * images.length)];
 
-        const petal = document.createElement('div');
-        petal.className = 'sakura-petal';
+        // Случайный тип для размера/формы
+        const type = 'type-' + (1 + Math.floor(Math.random() * 4));
 
-        const types = ['type-1', 'type-2', 'type-3', 'type-4'];
-        const randomType = types[Math.floor(Math.random() * types.length)];
-        petal.classList.add(randomType);
-
-        petal.style.left = (x + Math.random() * 30 - 15) + 'px';
-        petal.style.top = (y + Math.random() * 30 - 15) + 'px';
-
-        const randomX = (Math.random() - 0.5) * 120;
-        const randomY = Math.random() * 80 + 40;
-        const finalX = randomX + (Math.random() - 0.5) * 60;
-        const finalY = randomY + Math.random() * 100;
-
-        petal.style.setProperty('--random-x', randomX + 'px');
-        petal.style.setProperty('--random-y', randomY + 'px');
-        petal.style.setProperty('--final-x', finalX + 'px');
-        petal.style.setProperty('--final-y', finalY + 'px');
+        const petal = document.createElement('img');
+        petal.src = imgSrc;
+        petal.alt = 'sakura';
+        petal.draggable = false;
+        petal.className = `sakura-petal ${type}`;
+        petal.style.left = x + 'px';
+        petal.style.top = y + 'px';
+        petal.style.pointerEvents = 'none';
+        petal.style.userSelect = 'none';
+        // Случайная длительность и направление
+        const duration = 2.8 + Math.random() * 2.2;
+        petal.style.animationDuration = duration + 's';
+        petal.style.setProperty('--final-x', (Math.random() * 120 - 60) + 'px');
+        petal.style.setProperty('--final-y', (80 + Math.random() * 120) + 'px');
 
         this.container.appendChild(petal);
         this.petals.push(petal);
 
-        setTimeout(() => {
-            if (petal.parentNode) {
-                petal.parentNode.removeChild(petal);
-                const index = this.petals.indexOf(petal);
-                if (index > -1) {
-                    this.petals.splice(index, 1);
-                }
-            }
-        }, 4000);
+        petal.addEventListener('animationend', () => {
+            this.container.removeChild(petal);
+            this.petals = this.petals.filter(p => p !== petal);
+        });
     }
 }
 
@@ -335,7 +322,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 🌸 ИНИЦИАЛИЗАЦИЯ ЛЕПЕСТКОВ САКУРЫ
     new AdvancedSakuraPetals();
 
-    // 📝 ИНИЦИАЛИЗАЦИЯ ПЕЧАТНОЙ МАШИНКИ
+    // 📝 ИНИЦИАЛИЗАЦИЯ ПЕЧАТН��Й МАШИНКИ
     const subtitle = document.getElementById('typing-subtitle');
     if (subtitle) {
         const text = subtitle.textContent;

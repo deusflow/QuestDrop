@@ -109,6 +109,7 @@ body {
     box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.15); /* легкая тень для объема */
     backdrop-filter: blur(0.755rem); /* размытие фона */
     border: 1px solid rgba(255,255,255,0.3); /* тонкая светлая граница */
+    overflow: hidden;
 }
 
 
@@ -340,284 +341,289 @@ h3:hover .section-icon {
     grid-column: 1;
     width: 6rem;
     height: 8.75rem;
-    justify-self: start;
     margin-bottom: -1.6rem;
-
-    /* Ограничиваем область трансформации */
     transition: all 0.3s ease;
     transform-origin: center;
-    overflow: hidden; /* обрезаем выходящие части */
-
-    /* Добавляем границы для контроля */
+    overflow: hidden;
     max-width: 6rem;
     max-height: 8.75rem;
-    object-fit: contain; /* сохраняем пропорции */
+    object-fit: contain;
+    display: block;
+    align-self: center;
+    justify-self: center;
 }
 
+@media (max-width: 1100px) {
+  .section-icon {
+    width: 4rem;
+    height: 5.5rem;
+    max-width: 4rem;
+    max-height: 5.5rem;
+    margin-bottom: -0.8rem;
+  }
 
-/* Подзаголовок */
-.subtitle {
-    font-family: 'Courier New', monospace;
-    font-size: 1.3rem;
-    color: #ecd5dc;
-    text-align: center;
-    margin-top: 1rem;
+    .section-icon {
+        width: 10.5rem;
+        height: 10.5rem;
+        max-width: 15.5rem;
+        max-height: 15.5rem;
+        margin-bottom: -1.5rem;
+    }
+}
+@media (max-width: 700px) {
+  .section-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    max-width: 2.5rem;
+    max-height: 2.5rem;
+    margin-bottom: -0.4rem;
+  }
+}
+@media (max-width: 400px) {
+  .section-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    max-width: 1.5rem;
+    max-height: 1.5rem;
+    margin-bottom: -0.2rem;
+  }
+
+}
+
+/* --- Adaptive styles for mobile and tablets --- */
+@media (max-width: 900px) {
+  .container {
+    max-width: 98vw;
+    padding: 0.5rem;
+  }
+  .title {
+    font-size: 2.2rem;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .logo-icon {
+    width: 5rem;
+    height: 5rem;
+  }
+  .header {
+    padding: 1rem 0;
+  }
+  .main-content {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  .workers-section,
+  .tasks-section {
+    padding: 1rem;
     margin-bottom: 1rem;
-    font-weight: 700;
-    letter-spacing: 3px;
-    min-height: 3rem; /* больше места для подпрыгиваний */
-    position: relative;
-}
+    width: 100%;
+    min-width: 0;
+  }
 
-/* Стили для каждой буквы - ДРАМАТИЧНЫЙ УДАР */
-.subtitle .letter {
-    display: inline-block;
-    opacity: 0;
-    transform: translateY(40px) rotate(-15deg) scale(0.3);
-    animation: dramaticTypewriter 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-    text-shadow:
-            0 0 20px rgba(255, 64, 129, 0.8),
-            0 5px 10px rgba(0, 0, 0, 0.5);
-    position: relative;
-}
-
-/* МОЩНАЯ анимация удара по клавише */
-@keyframes dramaticTypewriter {
-    0% {
-        opacity: 0;
-        transform: translateY(40px) rotate(-15deg) scale(0.3);
-        text-shadow: 0 0 5px rgba(255, 64, 129, 0.3);
-    }
-
-    20% {
-        opacity: 0.8;
-        transform: translateY(-25px) rotate(8deg) scale(1.6);
-        text-shadow:
-                0 0 30px rgba(255, 64, 129, 1),
-                0 8px 15px rgba(0, 0, 0, 0.7),
-                0 0 50px rgba(255, 255, 255, 0.5);
-    }
-
-    40% {
-        opacity: 1;
-        transform: translateY(-15px) rotate(-5deg) scale(1.3);
-        text-shadow:
-                0 0 25px rgba(255, 64, 129, 0.9),
-                0 6px 12px rgba(0, 0, 0, 0.6);
-    }
-
-    60% {
-        transform: translateY(-8px) rotate(3deg) scale(1.1);
-        text-shadow:
-                0 0 20px rgba(255, 64, 129, 0.8),
-                0 4px 8px rgba(0, 0, 0, 0.5);
-    }
-
-    80% {
-        transform: translateY(-3px) rotate(-1deg) scale(1.05);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateY(0) rotate(0deg) scale(1);
-        text-shadow:
-                0 0 15px rgba(255, 64, 129, 0.6),
-                0 3px 6px rgba(0, 0, 0, 0.4);
+    .section-icon {
+        width: 10.5rem;
+        height: 10.5rem;
+        max-width: 15.5rem;
+        max-height: 15.5rem;
+        margin-bottom: -1.5rem;
     }
 }
 
-/* Подзаголовок - чистый и элегантный */
-.subtitle {
-    font-family: 'Courier New', monospace;
-    font-size: 1.2rem;
-    color: #ecd5dc;
-    text-align: center;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    font-weight: 600;
-    letter-spacing: 2px;
-    min-height: 2rem;
-    position: relative;
+@media (max-width: 600px) {
+  .container {
+    max-width: 100vw;
+    padding: 0.25rem;
+  }
+  .title {
+    font-size: 1.5rem;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .logo-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+  .header {
+    padding: 0.5rem 0;
+  }
+  .subtitle {
+    font-size: 1rem;
+    min-height: 1.2rem;
+  }
+  .section-icon {
+    width: 10.5rem;
+    height: 10.5rem;
+    max-width: 15.5rem;
+    max-height: 15.5rem;
+    margin-bottom: -1.5rem;
+  }
+  .main-content {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+  }
+  .workers-section,
+  .tasks-section {
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    width: 100%;
+    min-width: 0;
+  }
+  .list-item {
+    padding: 0.5rem 0.5rem;
+    font-size: 0.95rem;
+  }
+  .magic-button {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+  }
 }
 
-/* Стили для каждой буквы - СДЕРЖАННЫЙ ЭФФЕКТ */
-.subtitle .letter {
-    display: inline-block;
-    opacity: 0;
-    transform: translateY(10px);
-    animation: gentleTypewriter 0.5s ease-out forwards;
-    position: relative;
-}
-
-/* Мягкая анимация печатной машинки */
-@keyframes gentleTypewriter {
-    0% {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-
-    50% {
-        opacity: 0.8;
-        transform: translateY(-3px);
-        text-shadow: 0 0 8px rgba(236, 213, 220, 0.4);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
-}
-
-/* Легкий курсор печатной машинки */
-.subtitle::after {
-    content: '|';
-    animation: blink 1s infinite;
-    opacity: 0;
-}
-
-.subtitle.typing::after {
-    opacity: 1;
-}
-
-@keyframes blink {
-    0%, 50% { opacity: 1; }
-    51%, 100% { opacity: 0; }
-}
-
-
-/* Контейнер для лепестков сакуры */
-.sakura-petals {
+/* Sakura toggle button styles */
+.sakura-toggle-container {
     position: fixed;
+    left: 2vw;
+    bottom: 2vw;
+    z-index: 1000;
+    display: flex;
+    align-items: flex-end;
+    /* backdrop-filter убран, фон прозрачный */
+}
+.sakura-toggle-btn {
+    background: rgba(255,255,255,0.18);
+    color: #d72660;
+    font-size: 2.2rem;
+    border: 1.5px solid rgba(255,255,255,0.45);
+    border-radius: 50%;
+    box-shadow: 0 8px 32px 0 rgba(255, 182, 193, 0.25), 0 1.5px 6px 0 rgba(120, 0, 60, 0.08), 0 1px 2px 0 rgba(255,255,255,0.18) inset;
+    padding: 0.7em 0.85em;
+    cursor: pointer;
+    outline: none;
+    transition: box-shadow 0.3s, transform 0.2s, background 0.3s, border 0.3s;
+    backdrop-filter: blur(18px) saturate(180%);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+    position: relative;
+    overflow: hidden;
+}
+.sakura-toggle-btn::before {
+    content: '';
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none;
-    z-index: 1000;
-}
-
-
-
-
-
-/* CSS лепесток сакуры с PNG - ЗАМЕНИТЬ СУЩЕСТВУЮЩИЙ КОД */
-.sakura-petal {
-    position: absolute;
-    pointer-events: none;
-    animation: gentlePetalFloat 4.5s ease-out forwards;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    /* Убираем все ::before и ::after - теперь используем PNG */
-}
-
-/* Убираем старые стили ::before и ::after */
-.sakura-petal::before,
-.sakura-petal::after {
-    display: none;
-}
-
-/* PNG лепестки разных типов */
-.sakura-petal.type-1 {
-    background-image: url('/images/Sakura/SAKURA.png');
-    width: 20px;
-    height: 20px;
-}
-
-.sakura-petal.type-2 {
-    background-image: url('/images/Sakura/SAKURA2.png');
-    width: 18px;
-    height: 18px;
-}
-
-.sakura-petal.type-3 {
-    background-image: url('/images/Sakura/SAKURA3.png');
-    width: 22px;
-    height: 22px;
-}
-
-.sakura-petal.type-4 {
-    background-image: url('/images/Sakura/SAKURA4.png');
-    width: 16px;
-    height: 16px;
-}
-
-/* Анимация остается прежней */
-@keyframes gentlePetalFloat {
-    0% {
-        transform: translate(0, 0) rotate(0deg) scale(1);
-        opacity: 0.9;
-    }
-    25% {
-        transform: translate(var(--random-x), var(--random-y)) rotate(90deg) scale(1.05);
-        opacity: 0.8;
-    }
-    50% {
-        transform: translate(calc(var(--random-x) * 1.2), calc(var(--random-y) * 1.5)) rotate(180deg) scale(0.95);
-        opacity: 0.6;
-    }
-    75% {
-        transform: translate(calc(var(--final-x) * 0.8), calc(var(--final-y) * 0.8)) rotate(270deg) scale(0.8);
-        opacity: 0.4;
-    }
-    100% {
-        transform: translate(var(--final-x), var(--final-y)) rotate(360deg) scale(0.3);
-        opacity: 0;
-    }
-}
-
-
-
-/* Контейнер для кнопки в нижнем левом углу */
-.sakura-toggle-container {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    z-index: 2000; /* выше лепестков */
-}
-
-/* Стили кнопки переключения лепестков */
-.sakura-toggle-btn {
-    width: 60px;
-    height: 60px;
     border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    color: #ff69b4;
-    font-size: 24px;
-    cursor: pointer;
-
-    /* Анимация */
-    transition: all 0.3s ease;
-
-    /* Тень для объема */
-    box-shadow:
-            0 4px 15px rgba(0, 0, 0, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    background: linear-gradient(120deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.12) 100%);
+    opacity: 0.7;
+    pointer-events: none;
+    z-index: 1;
 }
-
-/* Hover эффект для кнопки */
+.sakura-toggle-btn::after {
+    content: '';
+    position: absolute;
+    top: 10%;
+    left: 20%;
+    width: 60%;
+    height: 30%;
+    border-radius: 50%;
+    background: linear-gradient(120deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.05) 100%);
+    opacity: 0.25;
+    filter: blur(2px);
+    pointer-events: none;
+    z-index: 2;
+}
 .sakura-toggle-btn:hover {
-    transform: scale(1.1);
-    background: rgba(255, 255, 255, 0.25);
-    border-color: rgba(255, 255, 255, 0.5);
-    box-shadow:
-            0 6px 20px rgba(0, 0, 0, 0.15),
-            0 0 20px rgba(255, 105, 180, 0.3);
+    box-shadow: 0 12px 40px 0 rgba(255, 182, 193, 0.35), 0 2px 8px 0 rgba(120, 0, 60, 0.12);
+    transform: scale(1.10) rotate(-6deg);
+    background: rgba(255,255,255,0.28);
+    border: 2px solid rgba(255,255,255,0.65);
+}
+.sakura-toggle-btn:active {
+    transform: scale(0.97) rotate(2deg);
+    background: rgba(255,255,255,0.22);
+}
+@media (max-width: 600px) {
+    .sakura-toggle-container {
+        left: 1vw;
+        bottom: 1vw;
+    }
+    .sakura-toggle-btn {
+        font-size: 1.4rem;
+        padding: 0.5em 0.6em;
+    }
+
+
 }
 
-/* Состояние "выключено" */
-.sakura-toggle-btn.disabled {
-    color: #666;
-    background: rgba(100, 100, 100, 0.15);
-    border-color: rgba(150, 150, 150, 0.3);
+/* Sakura Petals Animation */
+.sakura-petals {
+  position: fixed;
+  left: 0; top: 0; width: 100vw; height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  overflow: visible;
+}
+.sakura-petal {
+  position: absolute;
+  width: 1rem;
+  height: 1rem;
+  pointer-events: none;
+  opacity: 0.4;
+  will-change: transform, opacity;
+    background: radial-gradient(ellipse at 60% 40%, rgba(255, 224, 239, 0.4) 60%, rgba(251, 194, 235, 0.6) 100%);
+  border-radius: 60% 70% 60% 80%/80% 60% 70% 60%;
+  box-shadow: 0 2px 8px 0 rgba(255,182,193,0.18), 0 0 0 2px #fbc2eb33;
+  animation: sakura-fall 3.8s linear forwards;
+  transition: opacity 0.4s;
+}
+.sakura-petal.type-2 {
+  width: 1.3rem; height: 1rem;
+    background: radial-gradient(ellipse at 60% 40%, rgba(255, 224, 239, 0.1) 60%, rgba(251, 194, 235, 0.3) 100%);
+  border-radius: 70% 60% 80% 60%/60% 80% 60% 70%;
+  opacity: 0.3;
+}
+.sakura-petal.type-3 {
+  width: 0.5rem; height: 0.8rem;
+    background: radial-gradient(ellipse at 60% 40%, rgba(255, 224, 239, 0.2) 60%, rgba(251, 194, 235, 0.7) 100%);
+  border-radius: 80% 60% 70% 60%/60% 70% 80% 60%;
+  opacity: 0.4;
+}
+.sakura-petal.type-4 {
+  width: 1.1rem; height: 1.3rem;
+    background: radial-gradient(ellipse at 60% 40%, rgba(255, 224, 239, 0.4) 60%, rgba(251, 194, 235, 0.3) 100%);
+  border-radius: 60% 80% 60% 70%/70% 60% 80% 60%;
+  opacity: 0.2;
+}
+@keyframes sakura-fall {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  80% {
+    opacity: 0.95;
+  }
+  100% {
+    transform: translate(var(--final-x, 0), var(--final-y, 120px)) scale(0.85) rotate(360deg);
+    opacity: 0;
+  }
 }
 
-.sakura-toggle-btn.disabled:hover {
-    background: rgba(120, 120, 120, 0.2);
-    box-shadow:
-            0 4px 15px rgba(0, 0, 0, 0.1),
-            0 0 15px rgba(150, 150, 150, 0.2);
+@media (max-width: 600px) {
+  .sakura-petal, .sakura-petal.type-2, .sakura-petal.type-3, .sakura-petal.type-4 {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+    h3:hover .section-icon {
+        transform: scale(1.003); /* увеличение иконки */
+        filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
+    }
+
+
+}
+
+html, body {
+  overflow-x: hidden;
 }

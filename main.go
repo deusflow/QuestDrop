@@ -33,9 +33,11 @@ func main() {
 		}
 	})
 
-	http.HandleFunc("/api/workers/", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == "DELETE" {
-			handlers.DeleteWorker(w, r)
+	http.HandleFunc("/api/workers", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "GET" {
+			handlers.GetWorkers(w, r)
+		} else if r.Method == "POST" {
+			handlers.AddWorker(w, r)
 		}
 	})
 
@@ -51,9 +53,12 @@ func main() {
 		}
 	})
 
-	http.HandleFunc("/api/tasks/", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == "DELETE" {
-			handlers.DeleteTask(w, r)
+	// Для заданий
+	http.HandleFunc("/api/tasks", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "GET" {
+			handlers.GetTasks(w, r)
+		} else if r.Method == "POST" {
+			handlers.AddTask(w, r)
 		}
 	})
 
