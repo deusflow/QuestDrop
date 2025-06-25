@@ -183,8 +183,18 @@ function removeTask(index) {
 // Функция отображения результатов распределения
 function displayResults(results) {
     resultsDiv.innerHTML = '';
+    // Исправление: приводим results к массиву, если это не массив
+    if (!Array.isArray(results)) {
+        if (results && typeof results === 'object') {
+            results = Object.values(results);
+        } else {
+            results = [];
+        }
+    }
+    // Дополнительная проверка: если элемент не объект с нужными полями, фильтруем
+    results = results.filter(r => r && typeof r === 'object' && Array.isArray(r.tasks) && typeof r.worker_name !== 'undefined');
     if (results.length === 0) {
-        resultsDiv.innerHTML = '<p>Нет данных для распределения</p>';
+        resultsDiv.innerHTML = '<p>No data to distribute</p>';
         return;
     }
     resultsDiv.innerHTML =`
@@ -200,9 +210,9 @@ function displayResults(results) {
         li.className = 'list-item result-item';
         li.innerHTML = `
     <h4 class="result-worker">👤 ${result.worker_name}</h4>
-    <p><strong>Tasks: ${result.tasks.length}</strong></p>
+    <p><strong>Tasks: ${Array.isArray(result.tasks) ? result.tasks.length : 0}</strong></p>
     <ul class="result-tasks">
-      ${result.tasks.map(task => `<li>${task}</li>`).join('')}
+      ${(Array.isArray(result.tasks) ? result.tasks : []).map(task => `<li>${task}</li>`).join('')}
     </ul>
   `;
         resultsList.appendChild(li);
@@ -254,7 +264,7 @@ class AdvancedSakuraPetals {
             // Выключаем лепестки
             toggleBtn.classList.add('disabled');
             toggleBtn.textContent = '🚫';
-            toggleBtn.title = 'Включить лепестки сакуры';
+            toggleBtn.title = 'sakura petals are off';
             this.clearAllPetals(); // удаляем все существующие лепестки
             console.log('🚫 Лепестки сакуры выключены');
         }
@@ -355,12 +365,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // 🔄 ЗАГРУЗКА ДАННЫХ
-    // loadWorkers();
-    // loadTasks();
+    loadWorkers();
+    loadTasks();
     renderWorkersList();
     renderTasksList();
 
-    // 🔘 ОБРАБОТЧИКИ КНОПОК
+    // 🔘 ОБРАБОТЧИ��И КНОПОК
     if (addWorkerBtn) addWorkerBtn.addEventListener('click', addWorker);
     if (addTaskBtn) addTaskBtn.addEventListener('click', addTask);
 
@@ -385,7 +395,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            fetch('/api/distribute')
+            fetch('/api/distribute?userId=' + encodeURIComponent(userId))
                 .then(response => response.json())
                 .then(results => {
                     displayResults(results);
@@ -406,7 +416,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Очищаем localStorage для workers и tasks
             localStorage.removeItem('workers');
             localStorage.removeItem('tasks');
-            // После сброса загружаем пустые данные с сервера и синхронизируем localStorage
+            // После сброса загружаем пустые данные с сервера и синхро��изируем localStorage
             loadWorkers();
             loadTasks();
             resultsDiv.innerHTML = '';

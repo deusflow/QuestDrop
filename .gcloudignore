@@ -1,0 +1,58 @@
+# .gcloudignore
+# Ignore Google Cloud SDK and other unnecessary files for deployment
+
+google-cloud-sdk/
+google-cloud-sdk-*.tar.gz
+*.log
+*.pyc
+*.pyo
+__pycache__/
+node_modules/
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.tmp
+*.bak
+*.test
+*.md
+*.iml
+*.zip
+*.tar
+*.gz
+
+# Ignore version control and hidden folders
+.git/
+.github/
+.venv/
+
+# Ignore all hidden files and folders
+.*
+
+# Ignore test folders
+**/test/
+**/tests/
+**/__tests__/
+
+# Ignore database and env files
+*.db
+*.sqlite
+*.env
+*.local
+*.coverage
+*.egg-info/
+
+# Allow only necessary static files
+!static/
+!static/css/
+!static/js/
+!static/images/
+
+# Allow only necessary Go files and configs
+!main.go
+!go.mod
+!app.yaml
+!Procfile
+!handlers/
+!models/
+!services/
