@@ -627,3 +627,30 @@ h3:hover .section-icon {
 html, body {
   overflow-x: hidden;
 }
+
+.results-title-text{
+    display: inline-block;
+    justify-content: center;
+    grid-template-columns: 8.75rem 1fr;
+    gap: 1rem;
+    align-items: center;
+    font-size: 1em;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 1.5rem 2rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    box-shadow:
+            0 8px 32px rgba(0, 0, 0, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+    /*  ЭТИ СТРОКИ ДЛЯ АНИМАЦИИ */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    transform-origin: center;
+}

@@ -14,18 +14,44 @@ var workers []models.Worker
 // GetWorkers возвращает список всех работников
 func GetWorkers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(workers)
+	err := json.NewEncoder(w).Encode(workers)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(`{"error": "Internal server error"}`))
+		return
+	}
 }
 
 // AddWorker добавляет нового работника
 func AddWorker(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var worker models.Worker
-	json.NewDecoder(r.Body).Decode(&worker)
+	err := json.NewDecoder(r.Body).Decode(&worker)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest) // 400
+		err := json.NewEncoder(w).Encode(map[string]string{"error": "Invalid JSON"})
+		if err != nil {
+			return
+		}
+		return
+	}
+
+	if worker.Name == "" {
+		w.WriteHeader(http.StatusBadRequest) // 400
+		err := json.NewEncoder(w).Encode(map[string]string{"error": "Name is required"})
+		if err != nil {
+			return
+		}
+		return
+	}
+
 	worker.ID = len(workers) + 1      // Присваиваем ID на основе текущей длины среза
 	workers = append(workers, worker) // Добавляем
 	// Возвращаем добавленного работника
-	json.NewEncoder(w).Encode(worker)
+	err = json.NewEncoder(w).Encode(worker)
+	if err != nil {
+		return
+	}
 }
 
 // DeleteWorker удаляет работника по ID
@@ -37,7 +63,10 @@ func DeleteWorker(w http.ResponseWriter, r *http.Request) {
 	_, err := fmt.Sscanf(idStr, "%d", &id)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid ID"})
+		err := json.NewEncoder(w).Encode(map[string]string{"error": "Invalid ID"})
+		if err != nil {
+			return
+		}
 		return
 	}
 
@@ -50,5 +79,8 @@ func DeleteWorker(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	w.WriteHeader(http.StatusNotFound)
-	json.NewEncoder(w).Encode(map[string]string{"error": "Worker not found"})
+	err = json.NewEncoder(w).Encode(map[string]string{"error": "Worker not found"})
+	if err != nil {
+		return
+	}
 }

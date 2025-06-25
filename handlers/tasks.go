@@ -20,7 +20,20 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 func AddTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var task models.Task
-	json.NewDecoder(r.Body).Decode(&task)
+	// Декодируем JSON из тела запроса в структуру Task
+	err := json.NewDecoder(r.Body).Decode(&task)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid JSON"})
+		return
+	}
+
+	if task.Description == "" {
+		w.WriteHeader(http.StatusBadRequest) // 400
+		json.NewEncoder(w).Encode(map[string]string{"error": "Description is required"})
+		return
+	}
+
 	task.ID = len(tasks) + 1    // Присваиваем ID на основе текущей длины среза
 	tasks = append(tasks, task) // Добавляем задание в срез
 	// Возвращаем это новое задание
